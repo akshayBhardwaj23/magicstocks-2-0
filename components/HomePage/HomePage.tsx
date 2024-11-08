@@ -1,11 +1,8 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
 
 import { KeyboardEvent } from "react";
 import { ScrollArea } from "../ui/scroll-area";
-import SignIn from "../SignIn/SignIn";
-import { SignOut } from "../SignOut/SignOut";
 import { useChat } from "ai/react";
 
 import { ImSpinner } from "react-icons/im";
@@ -13,8 +10,6 @@ import MemoizedMessage from "../MemoizedMessage/MemoizedMessage";
 import ChatForm from "../ChatForm/ChatForm";
 
 const HomePage = () => {
-  const { data: session } = useSession(); //Gets the session object to check the logged in user
-
   const {
     messages,
     input,
@@ -88,8 +83,6 @@ const HomePage = () => {
           isLoading={isLoading}
           stop={stop}
         />
-
-        {!session?.user?.id ? <SignIn /> : <SignOut />}
       </div>
     </div>
   );
