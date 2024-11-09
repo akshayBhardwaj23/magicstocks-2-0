@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { IoStopCircle } from "react-icons/io5";
 import LoginDialogButton from "../LoginDialogButton/LoginDialogButton";
 import { useSession } from "next-auth/react";
-import { getMessagesCount } from "@/lib/getMessageCount";
+import { getMessagesCount } from "@/lib/userData";
 import Link from "next/link";
 
 type Props = {
@@ -42,7 +42,6 @@ const ChatForm = ({
       try {
         const count = await getMessagesCount(session.user.email);
         setMessageCount(count);
-        console.log(messageCount);
       } catch (error) {
         console.error("Error fetching message count:", error);
       }

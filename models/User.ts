@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema(
     facebookId: { type: String || undefined },
     phone: { type: String },
     password: { type: String },
+    plan: { type: String, default: "Free" },
     current_messages: {
       type: Number,
       default: 2,
