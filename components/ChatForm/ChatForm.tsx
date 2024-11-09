@@ -1,9 +1,11 @@
-import React, { KeyboardEvent } from "react";
+import React, { useState, useEffect, KeyboardEvent } from "react";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { IoStopCircle } from "react-icons/io5";
 import LoginDialogButton from "../LoginDialogButton/LoginDialogButton";
 import { useSession } from "next-auth/react";
+import { getMessagesCount } from "@/lib/getMessageCount";
+import Link from "next/link";
 
 type Props = {
   handleSubmit: (e: any) => void;
@@ -29,6 +31,48 @@ const ChatForm = ({
   stop,
 }: Props) => {
   const { data: session } = useSession(); //Gets the session object to check the logged in user
+  const [messageCount, setMessageCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchMessageCount();
+  }, [session]);
+
+  async function fetchMessageCount() {
+    if (session?.user) {
+      try {
+        const count = await getMessagesCount(session.user.email);
+        setMessageCount(count);
+        console.log(messageCount);
+      } catch (error) {
+        console.error("Error fetching message count:", error);
+      }
+    }
+  }
+
+  let actionButton;
+
+  if (messageCount !== null && messageCount <= 0) {
+    // Display LoginDialogButton if messageCount is 0 or less
+    actionButton = (
+      <Button type="button">
+        <Link href="/manage-subscription">Send Message</Link>
+      </Button>
+    );
+  } else if (isLoading) {
+    // Display Stop button if loading
+    actionButton = (
+      <Button type="button" onClick={stop}>
+        <IoStopCircle />
+      </Button>
+    );
+  } else if (session?.user) {
+    // Display Send button if user is logged in
+    actionButton = <Button type="submit">Send message</Button>;
+  } else {
+    // Display LoginDialogButton if no session
+    actionButton = <LoginDialogButton />;
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -41,15 +85,7 @@ const ChatForm = ({
             onKeyDown={handleKeyPress}
             disabled={isLoading}
           />
-          {isLoading ? (
-            <Button type="button" onClick={() => stop()}>
-              <IoStopCircle />
-            </Button>
-          ) : session?.user ? (
-            <Button type="submit">Send message</Button>
-          ) : (
-            <LoginDialogButton />
-          )}
+          {actionButton}
         </div>
       </form>
       <p className="text-sm text-center text-muted-foreground">

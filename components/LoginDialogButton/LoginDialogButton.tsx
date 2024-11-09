@@ -22,7 +22,7 @@ const LoginDialogButton = () => {
         <DialogHeader>
           <DialogTitle>Login</DialogTitle>
           <DialogDescription>
-            Sing In securely to try the AI for free!
+            Sign in securely to try the AI for free!
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

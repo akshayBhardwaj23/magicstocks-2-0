@@ -1,10 +1,12 @@
 import {
   BookOpen,
   Bot,
+  CreditCard,
   Frame,
+  GlobeLock,
   LifeBuoy,
-  Map,
-  PieChart,
+  Mailbox,
+  ReceiptText,
   Send,
   Settings2,
   SquareTerminal,
@@ -64,27 +66,27 @@ export const data = {
     {
       name: "Pricing",
       url: "/plans-billing",
-      icon: Frame,
+      icon: CreditCard,
     },
     {
       name: "About Us",
       url: "/about-us",
-      icon: PieChart,
+      icon: Frame,
     },
     {
       name: "Contact Us",
       url: "/contact-us",
-      icon: Map,
+      icon: Mailbox,
     },
     {
       name: "Terms & Conditions",
       url: "/terms-conditions",
-      icon: Map,
+      icon: ReceiptText,
     },
     {
       name: "Privacy Policy",
       url: "/privacy-policy",
-      icon: Map,
+      icon: GlobeLock,
     },
   ],
 };
