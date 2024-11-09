@@ -1,12 +1,13 @@
 import { auth } from "@/auth";
+import ManageCredits from "@/components/ManageCredits/ManageCredits";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const SubscriptionPage = async () => {
+const CreditsPage = async () => {
   const session = await auth();
   if (!session) return redirect("api/auth/signin");
 
-  return <div>Manage Subscription</div>;
+  return <ManageCredits email={session.user?.email} />;
 };
 
-export default SubscriptionPage;
+export default CreditsPage;

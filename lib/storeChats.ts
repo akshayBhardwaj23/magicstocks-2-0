@@ -1,5 +1,6 @@
 import Chat from "@/models/Chat";
 import User from "@/models/User";
+import connectMongo from "./connect-mongo";
 
 export async function storeChatsInDB(
   userId: String,
@@ -40,5 +41,22 @@ const decrementUserChats = async (userId: String) => {
     }
   } catch (err) {
     console.error("Error decrementing user chats:", err);
+  }
+};
+
+export const getChatHistory = async (email: string | undefined | null) => {
+  await connectMongo();
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const chats = await Chat.find({ userId: user._id }).sort({ createdAt: -1 });
+    if (chats.length === 0) {
+      return 0;
+    }
+    return chats;
+  } catch (err) {
+    console.error("Error in getting chat history:", err);
   }
 };

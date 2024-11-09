@@ -16,21 +16,21 @@ export const data = {
   navMain: [
     {
       title: "Profile",
-      url: "/profile",
+      url: "/",
       icon: SquareTerminal,
       isActive: true,
       items: [
+        {
+          title: "Personal",
+          url: "/profile",
+        },
         {
           title: "Chat History",
           url: "/chat-history",
         },
         {
-          title: "Manage Subscription",
-          url: "/manage-subscription",
-        },
-        {
-          title: "Upgrade",
-          url: "/upgrade",
+          title: "Manage Credits",
+          url: "/manage-credits",
         },
       ],
     },
