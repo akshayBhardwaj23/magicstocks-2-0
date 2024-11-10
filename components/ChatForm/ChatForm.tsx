@@ -1,4 +1,4 @@
-import React, { useState, useEffect, KeyboardEvent } from "react";
+import React, { useState, useEffect, KeyboardEvent, useCallback } from "react";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { IoStopCircle } from "react-icons/io5";
@@ -33,11 +33,7 @@ const ChatForm = ({
   const { data: session } = useSession(); //Gets the session object to check the logged in user
   const [messageCount, setMessageCount] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchMessageCount();
-  }, [session]);
-
-  async function fetchMessageCount() {
+  const fetchMessageCount = useCallback(async () => {
     if (session?.user) {
       try {
         const count = await getMessagesCount(session.user.email);
@@ -46,7 +42,11 @@ const ChatForm = ({
         console.error("Error fetching message count:", error);
       }
     }
-  }
+  }, [session?.user]);
+
+  useEffect(() => {
+    fetchMessageCount();
+  }, [session, fetchMessageCount]);
 
   let actionButton;
 

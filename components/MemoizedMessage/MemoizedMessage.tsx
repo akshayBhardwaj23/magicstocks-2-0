@@ -31,4 +31,6 @@ const MemoizedMessage = React.memo(({ message }: Message) => {
   );
 });
 
+MemoizedMessage.displayName = "MemoizedMessage";
+
 export default MemoizedMessage;

@@ -10,7 +10,6 @@ const PrivacyPage = () => {
           <p className="text-sm text-gray-500 mb-6">
             Effective Date: 08 November 2024 | Last Updated: 08 November 2024
           </p>
-
           <p className="mb-4">
             At MagicStocks.ai, we value your privacy and are committed to
             protecting your personal information. This Privacy Policy outlines
@@ -18,12 +17,10 @@ const PrivacyPage = () => {
             our Software-as-a-Service (SaaS) platform, which provides AI-driven
             stock market analysis based on live and historical market data.
           </p>
-
           <p className="mb-6">
             By using the MagicStocks.ai platform, you agree to the collection
             and use of information in accordance with this Privacy Policy.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">
             1. Information We Collect
           </h2>
@@ -39,7 +36,6 @@ const PrivacyPage = () => {
             <li>Phone number</li>
             <li>Account information</li>
           </ul>
-
           <h3 className="text-lg font-semibold mt-4 mb-2">1.2 Usage Data</h3>
           <p className="mb-2">
             We may also collect information about how the Service is accessed
@@ -54,18 +50,16 @@ const PrivacyPage = () => {
               Clickstream data and other usage data to improve your experience
             </li>
           </ul>
-
           <h3 className="text-lg font-semibold mt-4 mb-2">
             1.3 Stock Market Data
           </h3>
           <p className="mb-4">
-            In the course of providing stock market analysis, we may collect
+            {`In the course of providing stock market analysis, we may collect
             real-time and historical data, but this is typically anonymized and
             used solely to enhance the AI models. We do not retain this stock
             data in a manner that can be tied to an individual user unless
-            you’ve explicitly linked a brokerage account.
+            you've explicitly linked a brokerage account.`}
           </p>
-
           <h2 className="text-xl font-semibold mb-2">
             2. How We Use Your Information
           </h2>
@@ -82,13 +76,13 @@ const PrivacyPage = () => {
               Communicate with you about your account, updates, and promotions.
             </li>
           </ul>
-
           <h3 className="text-lg font-semibold mt-4 mb-2">
             2.2 To Improve User Experience
           </h3>
+
           <p className="mb-4">
-            We may use aggregated data to better understand user behavior and to
-            enhance the platform's features and functionality.
+            {`We may use aggregated data to better understand user behavior and to
+            enhance the platform's features and functionality.`}
           </p>
 
           <h3 className="text-lg font-semibold mt-4 mb-2">2.3 For Analytics</h3>
@@ -96,7 +90,6 @@ const PrivacyPage = () => {
             We use third-party analytics tools to track and analyze trends in
             how users interact with our Service to improve our offerings.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">
             3. Data Sharing and Disclosure
           </h2>
@@ -108,7 +101,6 @@ const PrivacyPage = () => {
             platforms, or sign-up options) only when you explicitly authorize us
             to do so.
           </p>
-
           <h3 className="text-lg font-semibold mt-4 mb-2">
             3.2 Service Providers
           </h3>
@@ -119,7 +111,6 @@ const PrivacyPage = () => {
             specific tasks on our behalf and are obligated not to disclose or
             use it for any other purpose.
           </p>
-
           <h3 className="text-lg font-semibold mt-4 mb-2">
             3.3 Legal Requirements
           </h3>
@@ -137,7 +128,6 @@ const PrivacyPage = () => {
               Service.
             </li>
           </ul>
-
           <h2 className="text-xl font-semibold mb-2">4. Data Security</h2>
           <p className="mb-4">
             We take data security seriously and use reasonable administrative,
@@ -146,7 +136,6 @@ const PrivacyPage = () => {
             please note that no method of transmission over the internet is 100%
             secure.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">5. Data Retention</h2>
           <p className="mb-4">
             We will retain your personal data for as long as your account is
@@ -155,14 +144,12 @@ const PrivacyPage = () => {
             unless we are required to retain it for legal or regulatory
             purposes.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">6. Your Data Rights</h2>
           <p className="mb-4">
             You have the right to access, update, or correct your personal
             information, and may also request deletion or data portability,
             subject to applicable laws.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">
             7. Cookies and Tracking Technologies
           </h2>
@@ -170,13 +157,11 @@ const PrivacyPage = () => {
             MagicStocks.ai uses cookies to enhance your experience. You may
             disable them, but this may affect functionality.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">8. Third-Party Links</h2>
           <p className="mb-4">
             Our Service may contain links to third-party websites. We are not
             responsible for their privacy practices.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">
             9. International Data Transfers
           </h2>
@@ -184,14 +169,12 @@ const PrivacyPage = () => {
             By using the Service, you consent to data transfers outside your
             country.
           </p>
-
-          <h2 className="text-xl font-semibold mb-2">10. Children's Privacy</h2>
+          <h2 className="text-xl font-semibold mb-2">{`10. Children's Privacy`}</h2>
           <p className="mb-4">
-            Our Service is not intended for children under the age of 18. If we
-            collect a child’s information without parental consent, we will
-            delete it.
+            {`Our Service is not intended for children under the age of 18. If we
+            collect a child's information without parental consent, we will
+            delete it.`}
           </p>
-
           <h2 className="text-xl font-semibold mb-2">
             11. Changes to This Privacy Policy
           </h2>
@@ -199,7 +182,6 @@ const PrivacyPage = () => {
             We may update this Privacy Policy periodically. Any significant
             changes will be communicated to you.
           </p>
-
           <h2 className="text-xl font-semibold mb-2">12. Contact Us</h2>
           <address className="mb-4">
             <p>MagicStocks.ai</p>
@@ -213,7 +195,6 @@ const PrivacyPage = () => {
               </a>
             </p>
           </address>
-
           <p className="text-sm italic">
             By using MagicStocks.ai, you agree to this Privacy Policy.
           </p>

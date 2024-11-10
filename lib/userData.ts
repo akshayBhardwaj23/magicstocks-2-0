@@ -39,7 +39,7 @@ export const updateUserProfileData = async (
 ) => {
   await connectMongo();
 
-  const user = await User.findOneAndUpdate(
+  await User.findOneAndUpdate(
     { email },
     {
       firstName,
@@ -62,7 +62,7 @@ export const updateMessageCount = async (
   }
 
   try {
-    const user = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email },
       { $inc: { current_messages: count } }, // Increment current_messages by count
       { new: true } // Option to return the updated user document

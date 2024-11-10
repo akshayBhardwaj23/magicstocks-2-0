@@ -13,10 +13,12 @@ const ContactPage = () => {
   return (
     <section className="flex flex-wrap justify-center">
       <h1 className="text-6xl font-bold text-center m-4">Contact Us</h1>
+
       <p className="m-4 text-center">
-        We'd love to hear from you! Whether you have a question, feedback, or
-        simply want to connect, please don't hesitate to reach out.
+        {`We'd love to hear from you! Whether you have a question, feedback, or
+        simply want to connect, please don't hesitate to reach out.`}
       </p>
+
       <Card className="w-[350px] m-4">
         <CardHeader>
           <CardTitle>Contact Us</CardTitle>

@@ -30,7 +30,7 @@ const AboutPage = () => {
             <p className="mb-4 text-lg">
               MagicStocks.ai leverages advanced AI technology to analyze the
               market, providing insights driven by technical, fundamental, and
-              sentiment analysis. Whether you're a seasoned investor or just
+              sentiment analysis. Whether you are a seasoned investor or just
               starting out, our smart chatbot delivers relevant stock analysis
               right at your fingertips.
             </p>

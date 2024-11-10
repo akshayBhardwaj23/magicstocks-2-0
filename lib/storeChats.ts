@@ -3,13 +3,13 @@ import User from "@/models/User";
 import connectMongo from "./connect-mongo";
 
 export async function storeChatsInDB(
-  userId: String,
-  userMessage: String,
-  botMessage: String,
-  finishReason: String,
-  promptTokens: Number,
-  completionTokens: Number,
-  totalTokens: Number
+  userId: string,
+  userMessage: string,
+  botMessage: string,
+  finishReason: string,
+  promptTokens: number,
+  completionTokens: number,
+  totalTokens: number
 ) {
   try {
     await Chat.create({
@@ -27,7 +27,7 @@ export async function storeChatsInDB(
   }
 }
 
-const decrementUserChats = async (userId: String) => {
+const decrementUserChats = async (userId: string) => {
   try {
     const user = await User.findByIdAndUpdate(
       userId,

@@ -13,12 +13,15 @@ const PlansPage = () => {
   return (
     <div>
       <h1 className="text-6xl font-bold text-center m-4">Plans</h1>
+
       <p className="m-4 p-4 text-center">
-        Choose a plan that fits your needs—pay only for what you use! With
+        {`Choose a plan that fits your needs—pay only for what you use! With
         MagicStocks AI, there are no subscriptions or expiration dates. Just
         purchase credits, and you're ready to dive into powerful insights
-        whenever you need them. <b>(1 credit = 1 message)</b>
+        whenever you need them.`}{" "}
+        <b>(1 credit = 1 message)</b>
       </p>
+
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 max-w-6xl mx-auto p-4 sm:p-6">
         <Card className="bg-background p-6 rounded-lg shadow-lg">
           <CardHeader>

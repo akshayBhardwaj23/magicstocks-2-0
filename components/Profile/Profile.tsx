@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,21 +32,21 @@ const formSchema = z.object({
     .max(14, { message: "Enter a valid phone number" }),
 });
 
-type User = {
-  firstName: string;
-  lastName: string;
-  phone: string;
-};
-
 const Profile = () => {
   const { data: session } = useSession();
   const [updateMessage, setUpdateMessage] = useState("");
 
-  useEffect(() => {
-    fetchUserData();
-  }, [session]);
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      phone: "",
+    },
+  });
 
-  async function fetchUserData() {
+  const fetchUserData = useCallback(async () => {
     if (session?.user) {
       try {
         const { firstName, lastName, phone } = await getUserData(
@@ -63,17 +63,11 @@ const Profile = () => {
         console.error("Error fetching user:", err);
       }
     }
-  }
+  }, [session?.user, form]);
 
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      phone: "",
-    },
-  });
+  useEffect(() => {
+    fetchUserData();
+  }, [session, fetchUserData]);
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
