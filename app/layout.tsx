@@ -16,6 +16,9 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SessionProvider } from "next-auth/react";
+import Script from "next/script";
+import Image from "next/image";
+import logo from "../public/logo.png";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,6 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased" suppressHydrationWarning={true}>
+        <Script
+          id="razorpay-checkout-js"
+          src="https://checkout.razorpay.com/v1/checkout.js"
+        />
         <SessionProvider>
           <SidebarProvider>
             <AppSidebar />
@@ -38,7 +45,13 @@ export default function RootLayout({
                 <div className="flex items-center gap-2 px-4">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
-                  <Breadcrumb>
+                  <Image
+                    alt="Magic Stocks AI"
+                    width={200}
+                    height={20}
+                    src={logo}
+                  />
+                  {/* <Breadcrumb>
                     <BreadcrumbList>
                       <BreadcrumbItem className="hidden md:block">
                         <BreadcrumbLink href="#">
@@ -50,7 +63,7 @@ export default function RootLayout({
                         <BreadcrumbPage>Data Fetching</BreadcrumbPage>
                       </BreadcrumbItem>
                     </BreadcrumbList>
-                  </Breadcrumb>
+                  </Breadcrumb> */}
                 </div>
               </header>
               {children}

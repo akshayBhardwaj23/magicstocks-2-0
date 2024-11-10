@@ -71,7 +71,7 @@ const PlansPage = () => {
           </CardContent>
           <CardFooter>
             <Button size="lg" className="w-full">
-              Get Started
+              <Link href="/manage-credits">Get Started</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -96,7 +96,7 @@ const PlansPage = () => {
           </CardContent>
           <CardFooter>
             <Button size="lg" className="w-full">
-              Get Started
+              <Link href="/manage-credits">Get Started</Link>
             </Button>
           </CardFooter>
         </Card>
