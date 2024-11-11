@@ -4,7 +4,6 @@ import Facebook from "next-auth/providers/facebook";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google, Facebook],
-  debug: true,
   callbacks: {
     async jwt({ token, user, account }) {
       if (user) {
@@ -17,7 +16,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async signIn(profile) {
-      console.log("inside signin2");
       try {
         const response = await fetch(
           `${process.env.NEXTAUTH_URL}/api/usercreate`,
@@ -50,25 +48,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       } catch (error) {
         return false;
       }
-
-      // let existingUser = await User.findOne({ email: profile.user.email });
-
-      // if (!existingUser) {
-      //   existingUser = await User.create({
-      //     email: profile.user.email,
-      //     firstName: profile.user.name?.split(" ")[0],
-      //     lastName: profile.user.name?.split(" ")[1],
-      //     image: profile.user.image,
-      //     googleId:
-      //       profile.account?.provider === "google"
-      //         ? profile.user.id
-      //         : undefined,
-      //     facebookId:
-      //       profile.account?.provider === "facebook"
-      //         ? profile.user.id
-      //         : undefined,
-      //   });
-      // }
 
       return true;
     },

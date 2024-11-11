@@ -5,8 +5,6 @@ import connectMongo from "@/lib/connect-mongo";
 import User from "@/models/User";
 
 export async function POST(req: Request) {
-  console.log("inside the funtion");
-
   try {
     await connectMongo();
     const userData = await req.json();
