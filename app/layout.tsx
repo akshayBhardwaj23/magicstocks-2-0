@@ -12,6 +12,8 @@ import { SessionProvider } from "next-auth/react";
 import Script from "next/script";
 import Image from "next/image";
 import logo from "../public/logo.png";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -38,12 +40,15 @@ export default function RootLayout({
                 <div className="flex items-center gap-2 px-4">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
-                  <Image
-                    alt="Magic Stocks AI"
-                    width={200}
-                    height={20}
-                    src={logo}
-                  />
+                  <Link href="/">
+                    <Image
+                      alt="Magic Stocks AI"
+                      width={200}
+                      height={20}
+                      src={logo}
+                    />
+                  </Link>
+
                   {/* <Breadcrumb>
                     <BreadcrumbList>
                       <BreadcrumbItem className="hidden md:block">
@@ -64,6 +69,7 @@ export default function RootLayout({
           </SidebarProvider>
         </SessionProvider>
       </body>
+      <GoogleAnalytics gaId={`${process.env.GOOGLE_ANALYTICS_TAG}`} />
     </html>
   );
 }

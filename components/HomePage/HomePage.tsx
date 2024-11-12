@@ -8,6 +8,8 @@ import { useChat } from "ai/react";
 import { ImSpinner } from "react-icons/im";
 import MemoizedMessage from "../MemoizedMessage/MemoizedMessage";
 import ChatForm from "../ChatForm/ChatForm";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 const HomePage = () => {
   const {
@@ -24,6 +26,8 @@ const HomePage = () => {
   const scrollAreaRef = useRef(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+  const { data: session } = useSession(); //Gets the session object to check the logged in user
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -38,6 +42,9 @@ const HomePage = () => {
     e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     if (e.key === "Enter" && !e.shiftKey) {
+      if (!session?.user) {
+        redirect("/api/auth/signin");
+      }
       e.preventDefault();
       handleSubmit(e);
     }
@@ -51,7 +58,10 @@ const HomePage = () => {
       {/* <div className="aspect-video rounded-xl bg-muted/50">3</div> */}
       {/* </div> */}
       <div className="min-h-[80vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
-        <ScrollArea ref={scrollAreaRef} className="h-[calc(100vh-200px)]">
+        <ScrollArea
+          ref={scrollAreaRef}
+          className="h-[calc(100vh-30vh)] md:h-[calc(100vh-25vh)]"
+        >
           <div className="flex flex-col gap-4 p-4">
             {messages.map((message) => (
               <MemoizedMessage key={message.id} message={message} />

@@ -64,7 +64,7 @@ const Plans = () => {
               color: "#3399cc",
             },
           };
-          //@ts-expect-error: it will open in new window
+          ////@ts-expect-error: it will open in new window
           const paymentObject = new window.Razorpay(options);
           paymentObject.on("payment.failed", function (response: any) {
             alert(response.error.description);

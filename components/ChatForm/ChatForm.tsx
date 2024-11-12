@@ -54,7 +54,7 @@ const ChatForm = ({
     // Display LoginDialogButton if messageCount is 0 or less
     actionButton = (
       <Button type="button">
-        <Link href="/manage-subscription">Send Message</Link>
+        <Link href="/manage-subscription">Send</Link>
       </Button>
     );
   } else if (isLoading) {
@@ -66,7 +66,7 @@ const ChatForm = ({
     );
   } else if (session?.user) {
     // Display Send button if user is logged in
-    actionButton = <Button type="submit">Send message</Button>;
+    actionButton = <Button type="submit">Send</Button>;
   } else {
     // Display LoginDialogButton if no session
     actionButton = <LoginDialogButton />;
@@ -75,7 +75,7 @@ const ChatForm = ({
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <div className="flex w-full gap-2 items-center m-2">
+        <div className="flex gap-2 items-center m-2">
           <Textarea
             placeholder="Type your message !!"
             className="flex-1"
@@ -87,10 +87,10 @@ const ChatForm = ({
           {actionButton}
         </div>
       </form>
-      <p className="text-sm text-center text-muted-foreground">
+      {/* <p className="text-sm text-center text-muted-foreground">
         MagicStocks.ai can make mistakes. Consider checking important
         information and contact us!
-      </p>
+      </p> */}
     </>
   );
 };

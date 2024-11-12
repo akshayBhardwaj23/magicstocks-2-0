@@ -16,7 +16,7 @@ const LoginDialogButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Send Message</Button>
+        <Button variant="outline">Send</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
