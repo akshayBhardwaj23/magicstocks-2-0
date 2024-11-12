@@ -21,7 +21,12 @@ const HomePage = () => {
     stop,
     error,
     reload,
-  } = useChat();
+  } = useChat({
+    onError: (error) => {
+      if (error.message.includes("Credits expired"))
+        redirect("/manage-credits");
+    },
+  });
 
   const scrollAreaRef = useRef(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);

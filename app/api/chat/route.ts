@@ -5,6 +5,7 @@ import { perplexity } from "@/lib/customAiModel";
 import { storeChatsInDB } from "@/lib/storeChats";
 import User from "@/models/User";
 import { streamText } from "ai";
+import { NextResponse } from "next/server";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
     }
 
     if (user.current_messages === 0) {
-      throw new Error("Credits expired, purchase a plan");
+      throw new Error("Credits expired");
     }
 
     const result = await streamText({
@@ -52,13 +53,6 @@ export async function POST(req: Request) {
     return result.toDataStreamResponse();
   } catch (err: any) {
     console.error("There is some error: " + err.message);
-    const result = await streamText({
-      model: perplexity(aiModelName),
-      system: `Just return the prompt from user`,
-      prompt: err.message,
-      maxTokens: 100,
-    });
-
-    return result.toDataStreamResponse();
+    return NextResponse.json({ error: err.message }, { status: 429 });
   }
 }
