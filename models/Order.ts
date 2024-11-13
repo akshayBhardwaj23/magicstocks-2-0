@@ -10,6 +10,9 @@ const OrderSchema = new mongoose.Schema(
     status: { type: String },
     plan: { type: String },
     amount: { type: String },
+    currency: { type: String },
+    orderId: { type: String },
+    paymentId: { type: String },
   },
   {
     timestamps: true,

@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
       status: "pending",
       plan: planType,
       amount: amount,
+      currency: order.currency,
+      orderId: order.id,
     });
 
     if (!createdOrder) {

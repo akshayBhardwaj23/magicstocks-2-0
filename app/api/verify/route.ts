@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     razorpaySignature,
   } = await request.json();
 
-  console.log(orderCreationId, razorpayPaymentId, razorpaySignature);
   const signature = generatedSignature(orderCreationId, razorpayPaymentId);
   if (signature !== razorpaySignature) {
     return NextResponse.json(
@@ -37,6 +36,7 @@ export async function POST(request: NextRequest) {
   }
   const order = await Order.findByIdAndUpdate(razorpayOrderId, {
     status: "completed",
+    paymentId: razorpayOrderId,
   });
   if (!order) {
     return NextResponse.json(
