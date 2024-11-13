@@ -4,5 +4,6 @@ Disallow: /profile
 Disallow: /manage-credits
 Disallow: /chat-history
 Disallow: /billing-history
+Disallow: /dashboard
 
 Sitemap: https://magicstocks.ai/sitemap.xml
