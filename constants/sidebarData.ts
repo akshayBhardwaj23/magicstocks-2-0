@@ -38,6 +38,10 @@ export const data = {
           title: "Manage Credits",
           url: "/manage-credits",
         },
+        {
+          title: "Billing History",
+          url: "/billing-history",
+        },
       ],
     },
     {

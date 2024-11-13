@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export function NavUser() {
   const { data: session } = useSession();
@@ -94,22 +95,22 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <Sparkles />
-                  Upgrade to Pro
+                  <Link href="/manage-credits">Manage Credits</Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <BadgeCheck />
-                  Account
+                  <Link href="/profile">Account</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <CreditCard />
-                  Billing
+                  <Link href="/billing-history">Billing History</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Bell />
-                  Notifications
+                  <Link href="/notifications">Notifications</Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
