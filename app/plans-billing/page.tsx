@@ -6,8 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Plans and Billing | MagicStocks.ai - Future of Stock Analysis",
+  description:
+    "Explore MagicStocks.ai's flexible plans and billing options. Select the best plan for your AI-powered stock analysis needs, with transparent pricing and easy upgrades",
+};
 
 const PlansPage = () => {
   return (

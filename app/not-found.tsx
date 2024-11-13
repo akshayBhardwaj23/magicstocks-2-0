@@ -1,6 +1,13 @@
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "404 | MagicStocks.ai - Future of Stock Analysis",
+  description:
+    "You seem lost, but still you have the right idea. MagicStocks.ai is the best ai tool in the market that gives highly accurate stock analysis in real time.",
+};
 
 const NotFoundPage = () => {
   return (

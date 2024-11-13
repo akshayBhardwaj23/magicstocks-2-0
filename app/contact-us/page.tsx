@@ -8,6 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact Us | MagicStocks.ai - Future of Stock Analysis",
+  description:
+    "Get in touch with the MagicStocks.ai team for any inquiries, support, or feedback. Our dedicated team is here to help you make the most of AI-powered stock analysis and market insights.",
+};
 
 const ContactPage = () => {
   return (

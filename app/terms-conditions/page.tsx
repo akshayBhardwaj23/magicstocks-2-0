@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "About Us | MagicStocks.ai - Future of Stock Analysis",
+  description:
+    "Review the Terms and Conditions for using MagicStocks.ai. Understand your rights, responsibilities, and our commitment to providing a safe, AI-powered stock analysis experience.",
+};
 
 const TermsPage = () => {
   return (

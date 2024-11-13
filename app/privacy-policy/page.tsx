@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | MagicStocks.ai - Future of Stock Analysis",
+  description:
+    "Read our Privacy Policy to understand how MagicStocks.ai collects, uses, and protects your personal data. We prioritize your privacy in all AI stock analysis interactions.",
+};
 
 const PrivacyPage = () => {
   return (

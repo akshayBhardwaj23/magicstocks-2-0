@@ -6,8 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "About Us | MagicStocks.ai - Future of Stock Analysis",
+  description:
+    "Learn about MagicStocks.ai, the AI-driven platform revolutionizing stock analysis. Our mission is to empower investors with data-driven insights and smart investment strategies for better stock market decisions.",
+};
 
 const AboutPage = () => {
   return (
