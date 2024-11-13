@@ -40,7 +40,6 @@ export async function POST(request: NextRequest) {
     if (!order) {
       throw new Error("error creating order");
     }
-    console.log(order);
 
     const user = await User.findOne({ email });
     if (!user) {

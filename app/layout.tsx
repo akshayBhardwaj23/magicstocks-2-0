@@ -14,6 +14,7 @@ import Image from "next/image";
 import logo from "../public/logo.png";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Link from "next/link";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -68,6 +69,7 @@ export default function RootLayout({
             </SidebarInset>
           </SidebarProvider>
         </SessionProvider>
+        <Toaster />
       </body>
       <GoogleAnalytics gaId={`${process.env.GOOGLE_ANALYTICS_TAG}`} />
     </html>

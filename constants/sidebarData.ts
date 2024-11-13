@@ -1,6 +1,7 @@
 import {
   BookOpen,
   Bot,
+  CircleHelp,
   CreditCard,
   Frame,
   GlobeLock,
@@ -14,6 +15,11 @@ import {
 
 export const data = {
   navMain: [
+    {
+      title: "Bot",
+      url: "/",
+      icon: Bot,
+    },
     {
       title: "Profile",
       url: "/",
@@ -37,7 +43,7 @@ export const data = {
     {
       title: "Help & FAQ",
       url: "/help-faq",
-      icon: Bot,
+      icon: CircleHelp,
     },
     {
       title: "Testimonial",

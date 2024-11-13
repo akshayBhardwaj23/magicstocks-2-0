@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { KeyboardEvent } from "react";
 import { ScrollArea } from "../ui/scroll-area";
@@ -10,11 +10,17 @@ import MemoizedMessage from "../MemoizedMessage/MemoizedMessage";
 import ChatForm from "../ChatForm/ChatForm";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "../ui/toast";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import SuggestedText from "../SuggestedText/SuggestedText";
 
 const HomePage = () => {
   const {
     messages,
     input,
+    setInput,
     handleInputChange,
     handleSubmit,
     isLoading,
@@ -24,9 +30,22 @@ const HomePage = () => {
   } = useChat({
     onError: (error) => {
       if (error.message.includes("Credits expired"))
-        redirect("/manage-credits");
+        toast({
+          variant: "destructive",
+          title: "Uh oh! No Credits Left.",
+          description:
+            "Please purchase more credits to continue using MagicStocks.ai",
+          action: (
+            <ToastAction altText="Buy Credits">
+              <Link href="/manage-credits">Buy Credits</Link>
+            </ToastAction>
+          ),
+        });
+      //redirect("/manage-credits");
     },
   });
+
+  const [firstMessage, wasFirstMessage] = useState<boolean>(true);
 
   const scrollAreaRef = useRef(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -35,6 +54,7 @@ const HomePage = () => {
 
   useEffect(() => {
     scrollToBottom();
+    if (messages.length > 0) wasFirstMessage(false);
   }, [messages]);
 
   const scrollToBottom = () => {
@@ -53,6 +73,10 @@ const HomePage = () => {
       e.preventDefault();
       handleSubmit(e);
     }
+  };
+
+  const handleSuggestedText = (val: string) => {
+    setInput(val);
   };
 
   return (
@@ -83,10 +107,19 @@ const HomePage = () => {
           {error && (
             <>
               <div>An error occurred.</div>
-              <button type="button" onClick={() => reload()}>
+              {error.message.includes("Credits expired") && (
+                <p className="bg-gray-200 mt-4 p-4">
+                  Please purchase more credits to continue{" "}
+                  <Button variant="link">Buy Credits</Button>
+                </p>
+              )}
+              <Button type="button" className="mt-4" onClick={() => reload()}>
                 Retry
-              </button>
+              </Button>
             </>
+          )}
+          {firstMessage && (
+            <SuggestedText handleSuggestedText={handleSuggestedText} />
           )}
         </ScrollArea>
 

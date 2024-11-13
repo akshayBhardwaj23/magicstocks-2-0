@@ -17,7 +17,7 @@ const MemoizedMessage = React.memo(({ message }: Message) => {
       }`}
     >
       <div
-        className={`max-w-[80%] rounded-lg p-3 ${
+        className={`max-w-[90%] rounded-lg p-3 ${
           message.role === "user"
             ? "bg-muted text-foreground"
             : "bg-primary text-primary-foreground"

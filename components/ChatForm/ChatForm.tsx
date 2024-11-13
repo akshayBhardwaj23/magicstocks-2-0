@@ -54,7 +54,7 @@ const ChatForm = ({
     // Display LoginDialogButton if messageCount is 0 or less
     actionButton = (
       <Button type="button">
-        <Link href="/manage-subscription">Send</Link>
+        <Link href="/manage-credits">Send</Link>
       </Button>
     );
   } else if (isLoading) {
