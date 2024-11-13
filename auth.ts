@@ -1,11 +1,10 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import Facebook from "next-auth/providers/facebook";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google, Facebook],
+  providers: [Google /*Facebook*/],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
       }

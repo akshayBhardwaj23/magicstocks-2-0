@@ -30,9 +30,9 @@ const LoginDialogButton = () => {
             <Button onClick={() => signIn("google")}>
               Sign in with Google
             </Button>
-            <Button onClick={() => signIn("facebook")}>
+            {/* <Button onClick={() => signIn("facebook")}>
               Sign in with Facebook
-            </Button>
+            </Button> */}
           </div>
         </div>
         <DialogFooter>
