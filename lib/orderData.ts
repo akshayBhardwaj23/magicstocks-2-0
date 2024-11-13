@@ -27,7 +27,6 @@ export const getOrderData = async (email: string | undefined | null) => {
       id: order.orderId,
       createdAt: order.createdAt.toString(),
     }));
-    console.log(formattedOrder);
 
     return formattedOrder;
   } catch (err) {
