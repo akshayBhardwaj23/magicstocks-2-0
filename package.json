@@ -31,6 +31,7 @@
     "mongoose": "^8.8.0",
     "next": "15.0.2",
     "next-auth": "^5.0.0-beta.25",
+    "next-sitemap": "^4.2.3",
     "razorpay": "^2.9.5",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

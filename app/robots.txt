@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /profile
+Disallow: /manage-credits
+Disallow: /chat-history
+Disallow: /billing-history
+
+Sitemap: https://magicstocks.ai/sitemap.xml
