@@ -10,7 +10,7 @@ export type Payment = {
   id?: string;
   amount?: string;
   currency?: string;
-  createdAt?: String;
+  createdAt?: string;
   orderId?: string;
   paymentId?: string;
   plan?: string;
