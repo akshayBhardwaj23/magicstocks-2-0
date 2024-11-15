@@ -9,7 +9,7 @@ export const getOrderData = async (email: string | undefined | null) => {
     if (!user) {
       throw new Error("User not found");
     }
-    const orders = await Order.find({ userId: user._id })
+    const orders = await Order.find({ userId: user._id, status: "completed" })
       .sort({
         createdAt: -1,
       })
