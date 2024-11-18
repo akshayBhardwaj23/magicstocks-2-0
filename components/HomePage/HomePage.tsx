@@ -46,8 +46,6 @@ const HomePage = () => {
   });
 
   const [firstMessage, wasFirstMessage] = useState<boolean>(true);
-  // const [scrollAreaHeight, setScrollAreaHeight] = useState("100vh");
-  // const chatFormRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -57,21 +55,6 @@ const HomePage = () => {
     scrollToBottom();
     if (messages.length > 0) wasFirstMessage(false);
   }, [messages]);
-
-  // useEffect(() => {
-  //   const updateScrollAreaHeight = () => {
-  //     const chatFormHeightPx = chatFormRef.current?.offsetHeight || 0;
-  //     const chatFormHeightVh = (chatFormHeightPx / window.innerHeight) * 100; // Convert px to vh
-
-  //     setScrollAreaHeight(`h-[calc(100vh-${chatFormHeightVh}vh-20vh)]`);
-  //   };
-  //   updateScrollAreaHeight();
-
-  //   // Recalculate height on window resize
-  //   window.addEventListener("resize", updateScrollAreaHeight);
-
-  //   return () => window.removeEventListener("resize", updateScrollAreaHeight);
-  // }, []);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -97,17 +80,10 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3"> */}
-      {/* <div className="aspect-video rounded-xl bg-muted/50">1</div> */}
-      {/* <div className="aspect-video rounded-xl bg-muted/50">2</div> */}
-      {/* <div className="aspect-video rounded-xl bg-muted/50">3</div> */}
-      {/* </div> */}
       <div className="min-h-[80vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
         <ScrollArea
           ref={scrollAreaRef}
-          //className="h-[calc(100vh-30vh)] md:h-[calc(100vh-15vh)] lg:h-[calc(100vh-22vh)] xl:h-[calc(100vh-20vh)] 2xl:h-[calc(100vh-25vh)]"
           className="h-[calc(100vh-240px)] md:h-[calc(100vh-180px)]"
-          //className={`${scrollAreaHeight}`}
         >
           <div className="flex flex-col gap-4 p-4">
             {messages.map((message) => (
@@ -141,7 +117,6 @@ const HomePage = () => {
           )}
         </ScrollArea>
 
-        {/* <div ref={chatFormRef}> */}
         <ChatForm
           handleSubmit={handleSubmit}
           input={input}
@@ -150,7 +125,6 @@ const HomePage = () => {
           isLoading={isLoading}
           stop={stop}
         />
-        {/* </div> */}
       </div>
     </div>
   );
