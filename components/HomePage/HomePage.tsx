@@ -106,7 +106,7 @@ const HomePage = () => {
         <ScrollArea
           ref={scrollAreaRef}
           //className="h-[calc(100vh-30vh)] md:h-[calc(100vh-15vh)] lg:h-[calc(100vh-22vh)] xl:h-[calc(100vh-20vh)] 2xl:h-[calc(100vh-25vh)]"
-          className="h-[calc(100vh-180px)]"
+          className="h-[calc(100vh-220px)] md:h-[calc(100vh-180px)]"
           //className={`${scrollAreaHeight}`}
         >
           <div className="flex flex-col gap-4 p-4">
