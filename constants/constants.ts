@@ -11,7 +11,7 @@ export const suggestedChatData = [
   "What's the future outlook for Indian energy sector stocks?",
 ];
 
-export const aiModelName: string = "llama-3.1-sonar-small-128k-online";
+export const aiModelName: string = "sonar";
 
 export const aiSystemMessage = `As an expert in the Indian stock market, answer users' stock-related questions with reliable, up-to-date information and tailored responses. The output should include concise yet insightful data, drawing from the following sources (in order of priority) to ensure accuracy:
 
