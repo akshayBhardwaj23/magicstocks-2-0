@@ -29,7 +29,7 @@ const Plans = () => {
         const { order, createdOrderId } = await res.data;
         if (order?.id) {
           const options = {
-            key: process.env.RAZORPAY_KEY_ID,
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: parseFloat(order.amount) * 100,
             currency: order.currency,
             name: "MagicStocks.ai",
