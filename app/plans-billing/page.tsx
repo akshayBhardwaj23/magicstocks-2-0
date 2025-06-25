@@ -63,7 +63,7 @@ const PlansPage = () => {
         <Card className="bg-background p-6 rounded-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold">Starter</CardTitle>
-            <div className="text-4xl font-bold">₹49</div>
+            <div className="text-4xl font-bold">$1</div>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ const PlansPage = () => {
         <Card className="bg-background p-6 rounded-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold">Pro</CardTitle>
-            <div className="text-4xl font-bold">₹599</div>
+            <div className="text-4xl font-bold">$10</div>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="flex items-center gap-2">
