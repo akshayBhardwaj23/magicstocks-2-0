@@ -26,12 +26,12 @@ export async function POST(request: NextRequest) {
     }
 
     let amount = 0;
-    if (planType === "Starter") amount = 49;
-    else if (planType === "Pro") amount = 599;
+    if (planType === "Starter") amount = 1;
+    else if (planType === "Pro") amount = 10;
 
     const options = {
       amount: amount * 100,
-      currency: "INR",
+      currency: "USD",
       payment_capture: 1,
       receipt: "rcp1",
     };

@@ -56,7 +56,7 @@ export const updateMessageCount = async (
 ) => {
   let count = 0;
   if (planType === "Starter") {
-    count = 49;
+    count = 20;
   } else if (planType === "Pro") {
     count = 300;
   }
