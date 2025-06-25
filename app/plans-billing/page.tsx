@@ -33,7 +33,7 @@ const PlansPage = () => {
         <Card className="bg-background p-6 rounded-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold">Free</CardTitle>
-            <div className="text-4xl font-bold">₹0</div>
+            <div className="text-4xl font-bold">$0</div>
             {/* <div className="text-muted-foreground text-sm">/month</div> */}
           </CardHeader>
           <CardContent className="grid gap-4">
