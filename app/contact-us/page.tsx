@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 const ContactPage = () => {
   return (
-    <section className="flex flex-wrap justify-center">
+    <section>
       <h1 className="text-6xl font-bold text-center m-4">Contact Us</h1>
 
       <p className="m-4 text-center">
@@ -26,20 +26,30 @@ const ContactPage = () => {
         simply want to connect, please don't hesitate to reach out.`}
       </p>
 
-      <Card className="w-[350px] m-4">
-        <CardHeader>
-          <CardTitle>Contact Us</CardTitle>
-          <CardDescription className="pt-4">
-            Email us at support@magicstocks.ai.
-          </CardDescription>
-        </CardHeader>
+      <div className="flex flex-wrap justify-center">
+        <Card className="w-[350px] m-4">
+          <CardHeader>
+            <CardTitle>Contact Us</CardTitle>
+            <CardDescription className="pt-4">
+              Email us at support@magicstocks.ai.
+            </CardDescription>
+          </CardHeader>
 
-        <CardFooter className="flex justify-between">
-          <Button>
-            <Link href="mailto:support@magicstocks.ai">Click Here</Link>
-          </Button>
-        </CardFooter>
-      </Card>
+          <CardFooter className="flex justify-between">
+            <Button>
+              <Link href="mailto:support@magicstocks.ai">Click Here</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        <Card className="w-[350px] m-4">
+          <CardHeader>
+            <CardTitle>Operational Address</CardTitle>
+            <CardDescription className="pt-4">
+              #1448, TDI City, Sector - 110, 140307 - Mohali, Punjab
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
     </section>
   );
 };
