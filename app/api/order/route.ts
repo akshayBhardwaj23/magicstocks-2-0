@@ -25,13 +25,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Amounts in INR
     let amount = 0;
-    if (planType === "Starter") amount = 1;
-    else if (planType === "Pro") amount = 10;
+    if (planType === "Starter") amount = 99; // ₹99
+    else if (planType === "Pro") amount = 799; // ₹799
 
     const options = {
-      amount: amount * 100,
-      currency: "USD",
+      amount: amount * 100, // Razorpay expects amount in paise
+      currency: "INR",
       payment_capture: 1,
       receipt: "rcp1",
     };

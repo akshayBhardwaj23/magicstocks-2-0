@@ -30,7 +30,8 @@ const Plans = () => {
         if (order?.id) {
           const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-            amount: parseFloat(order.amount) * 100,
+            // order.amount from server is already in paise
+            amount: order.amount,
             currency: order.currency,
             name: "MagicStocks.ai",
             description: "MagicStocks.ai Credits",
@@ -89,7 +90,7 @@ const Plans = () => {
       <Card className="bg-background p-6 rounded-lg shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Starter</CardTitle>
-          <div className="text-4xl font-bold">$1</div>
+          <div className="text-4xl font-bold">₹99</div>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="flex items-center gap-2">
@@ -118,7 +119,7 @@ const Plans = () => {
       <Card className="bg-background p-6 rounded-lg shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Pro</CardTitle>
-          <div className="text-4xl font-bold">$10</div>
+          <div className="text-4xl font-bold">₹799</div>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="flex items-center gap-2">

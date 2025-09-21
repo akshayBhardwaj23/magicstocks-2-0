@@ -73,25 +73,53 @@ const ChatForm = ({
   }
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <div className="flex gap-2 items-center m-2">
-          <Textarea
-            placeholder="Type your message !!"
-            className="flex-1"
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyPress}
-            disabled={isLoading}
-          />
-          {actionButton}
+    <div className="w-full max-w-4xl mx-auto p-3 md:p-4">
+      <form onSubmit={handleSubmit} className="space-y-2 md:space-y-4">
+        <div className="flex gap-2 md:gap-3 items-end">
+          <div className="flex-1 relative">
+            <Textarea
+              placeholder="Ask me anything about stocks, market analysis, or investment strategies..."
+              className="min-h-[50px] md:min-h-[60px] max-h-[100px] md:max-h-[120px] resize-none pr-12 rounded-xl md:rounded-2xl border-2 focus:border-primary/50 transition-colors text-sm"
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
+              disabled={isLoading}
+              rows={1}
+            />
+            <div className="absolute bottom-2 md:bottom-3 right-2 md:right-3 text-xs text-muted-foreground">
+              {input.length > 0 && `${input.length}`}
+            </div>
+          </div>
+          <div className="flex-shrink-0">{actionButton}</div>
+        </div>
+
+        {/* Hide footer on mobile when fixed */}
+        <div className="hidden md:flex md:items-center md:justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-4">
+            <span>Press Enter to send, Shift+Enter for new line</span>
+            {messageCount !== null && (
+              <span className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                {messageCount} credits remaining
+              </span>
+            )}
+          </div>
+          <span>
+            MagicStocks.ai can make mistakes. Verify important information.
+          </span>
+        </div>
+
+        {/* Mobile footer - show credits only */}
+        <div className="md:hidden flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          {messageCount !== null && (
+            <span className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              {messageCount} credits
+            </span>
+          )}
         </div>
       </form>
-      {/* <p className="text-sm text-center text-muted-foreground">
-        MagicStocks.ai can make mistakes. Consider checking important
-        information and contact us!
-      </p> */}
-    </>
+    </div>
   );
 };
 
