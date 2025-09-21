@@ -46,7 +46,7 @@ const SuggestedText = ({
         </div>
 
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-          {suggestedChatData.map((chat, index) => (
+          {suggestedChatData.map((chat) => (
             <button
               onClick={() => handleSuggestedText(chat)}
               key={chat}

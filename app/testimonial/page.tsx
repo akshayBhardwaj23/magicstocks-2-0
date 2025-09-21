@@ -15,7 +15,7 @@ const TestimonialPage = () => {
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "MagicStocks.ai has revolutionized my investment approach. The AI's analysis of Reliance Industries helped me identify a 25% gain opportunity I would have missed. The portfolio optimization suggestions are incredibly accurate.",
+        "MagicStocks.ai has revolutionized my investment approach. The AI&apos;s analysis of Reliance Industries helped me identify a 25% gain opportunity I would have missed. The portfolio optimization suggestions are incredibly accurate.",
       highlight: "25% gain on Reliance Industries",
       verified: true,
       broker: "Zerodha",
@@ -27,7 +27,7 @@ const TestimonialPage = () => {
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "As a financial advisor, I use MagicStocks.ai to provide better insights to my clients. The AI's fundamental analysis is thorough and the risk assessment features help me create more balanced portfolios.",
+        "As a financial advisor, I use MagicStocks.ai to provide better insights to my clients. The AI&apos;s fundamental analysis is thorough and the risk assessment features help me create more balanced portfolios.",
       highlight: "Improved client portfolio performance by 18%",
       verified: true,
       broker: "Upstox",
@@ -51,7 +51,7 @@ const TestimonialPage = () => {
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "I was new to stock investing when I started using MagicStocks.ai. The AI's explanations are so clear and educational. It's like having a personal financial advisor available 24/7. My portfolio has grown 35% in 6 months.",
+        "I was new to stock investing when I started using MagicStocks.ai. The AI&apos;s explanations are so clear and educational. It&apos;s like having a personal financial advisor available 24/7. My portfolio has grown 35% in 6 months.",
       highlight: "35% portfolio growth in 6 months",
       verified: true,
       broker: "Upstox",
@@ -63,7 +63,7 @@ const TestimonialPage = () => {
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "After retirement, I needed a reliable way to manage my investments. MagicStocks.ai's conservative analysis approach and risk management features give me confidence in my investment decisions.",
+        "After retirement, I needed a reliable way to manage my investments. MagicStocks.ai&apos;s conservative analysis approach and risk management features give me confidence in my investment decisions.",
       highlight: "Stable 12% annual returns",
       verified: true,
       broker: "Zerodha",
@@ -75,7 +75,7 @@ const TestimonialPage = () => {
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "The sector analysis and market trends predictions are incredibly accurate. I've been able to diversify my portfolio effectively and avoid several market downturns thanks to the AI's early warnings.",
+        "The sector analysis and market trends predictions are incredibly accurate. I&apos;ve been able to diversify my portfolio effectively and avoid several market downturns thanks to the AI&apos;s early warnings.",
       highlight: "Avoided 3 major market corrections",
       verified: true,
       broker: "Upstox",
@@ -116,7 +116,7 @@ const TestimonialPage = () => {
         </h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
           Join thousands of successful investors who have transformed their
-          investment strategies with MagicStocks.ai's AI-powered insights.
+          investment strategies with MagicStocks.ai&apos;s AI-powered insights.
         </p>
 
         {/* Stats */}
