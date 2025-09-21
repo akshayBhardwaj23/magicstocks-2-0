@@ -13,7 +13,7 @@ type Message = {
 
 const MemoizedMessage = React.memo(({ message }: Message) => {
   const isUser = message.role === "user";
-  
+
   return (
     <div className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
@@ -23,7 +23,7 @@ const MemoizedMessage = React.memo(({ message }: Message) => {
           </AvatarFallback>
         </Avatar>
       )}
-      
+
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
           isUser
@@ -32,15 +32,23 @@ const MemoizedMessage = React.memo(({ message }: Message) => {
         }`}
       >
         <div className="prose prose-sm max-w-none dark:prose-invert">
-          <ReactMarkdown 
+          <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-              ul: ({ children }) => <ul className="mb-2 last:mb-0 space-y-1">{children}</ul>,
-              ol: ({ children }) => <ol className="mb-2 last:mb-0 space-y-1">{children}</ol>,
+              ul: ({ children }) => (
+                <ul className="mb-2 last:mb-0 space-y-1">{children}</ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="mb-2 last:mb-0 space-y-1">{children}</ol>
+              ),
               li: ({ children }) => <li className="text-sm">{children}</li>,
               code: ({ children, className }) => (
-                <code className={`text-xs px-1.5 py-0.5 rounded bg-muted-foreground/10 ${className || ''}`}>
+                <code
+                  className={`text-xs px-1.5 py-0.5 rounded bg-muted-foreground/10 ${
+                    className || ""
+                  }`}
+                >
                   {children}
                 </code>
               ),
@@ -55,7 +63,7 @@ const MemoizedMessage = React.memo(({ message }: Message) => {
           </ReactMarkdown>
         </div>
       </div>
-      
+
       {isUser && (
         <Avatar className="h-8 w-8 shrink-0">
           <AvatarFallback className="bg-secondary text-secondary-foreground">

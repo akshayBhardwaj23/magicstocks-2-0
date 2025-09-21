@@ -24,7 +24,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="border-b">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="hover:bg-sidebar-accent">
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              className="hover:bg-sidebar-accent"
+            >
               <Link href="/">
                 <div className="flex items-center gap-3">
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm">
