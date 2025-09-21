@@ -15,6 +15,7 @@ import { ToastAction } from "../ui/toast";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import SuggestedText from "../SuggestedText/SuggestedText";
+import { TrendingUp, ArrowRight } from "lucide-react";
 
 const HomePage = () => {
   const {
@@ -84,6 +85,21 @@ const HomePage = () => {
       <div className="md:hidden flex flex-col h-full">
         <ScrollArea ref={scrollAreaRef} className="flex-1 pb-32">
           <div className="flex flex-col gap-4 p-4 max-w-4xl mx-auto">
+            {messages.length === 0 && (
+              <div className="flex justify-center mb-4">
+                <Button 
+                  asChild 
+                  size="lg" 
+                  className="bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 text-base font-semibold border border-red-400/20"
+                >
+                  <Link href="/portfolio" className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Portfolio Analysis
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            )}
             {messages.map((message) => (
               <MemoizedMessage key={message.id} message={message} />
             ))}
@@ -150,6 +166,21 @@ const HomePage = () => {
           className="flex-1 h-[calc(100vh-160px)]"
         >
           <div className="flex flex-col gap-6 p-6 max-w-4xl mx-auto">
+            {messages.length === 0 && (
+              <div className="flex justify-center mb-6">
+                <Button 
+                  asChild 
+                  size="lg" 
+                  className="bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-8 py-4 text-lg font-semibold border border-red-400/20"
+                >
+                  <Link href="/portfolio" className="flex items-center gap-3">
+                    <TrendingUp className="h-6 w-6" />
+                    Portfolio Analysis
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </div>
+            )}
             {messages.map((message) => (
               <MemoizedMessage key={message.id} message={message} />
             ))}

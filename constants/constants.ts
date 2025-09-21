@@ -1,7 +1,6 @@
 export const suggestedChatData = [
   "Give me a detailed analysis of [RELIANCE.NS]",
   "Is [TCS.NS] a good buy right now?",
-  "Should I sell my [HDFCBANK.NS] this month?",
   "Show me the financial health of [INFY.NS]",
   "Give me technical indicators for [ICICIBANK.NS]",
   "What is the latest news about [ITC.NS]?",
@@ -9,13 +8,11 @@ export const suggestedChatData = [
   "Why is [TATASTEEL.NS] stock falling this week?",
   "Compare [RELIANCE.NS] vs [ONGC.NS] fundamentals",
   "Which is a better long-term buy: [HDFC.NS] or [KOTAKBANK.NS]?",
-  "Compare the last 6 months' performance of [ADANIENT.NS] and [ADANIPORTS.NS]",
   "Top 5 growth stocks in India to watch this month",
   "Best dividend-paying Indian stocks right now",
   "Show me undervalued stocks in NIFTY 50",
   "Stocks likely to benefit from India’s capex cycle in 2025",
   "Where is NIFTY 50 heading next week?",
-  "Will RBI policy impact bank stocks soon?",
   "What sectors in India are expected to perform badly in 2025?",
 ];
 
