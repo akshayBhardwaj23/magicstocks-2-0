@@ -20,34 +20,39 @@ import Link from "next/link";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
+    <Sidebar variant="inset" className="border-r" {...props}>
+      <SidebarHeader className="border-b">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton size="lg" asChild className="hover:bg-sidebar-accent">
               <Link href="/">
-                {/* <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
-                </div> */}
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    Magic Stocks AI
-                  </span>
-                  <span className="truncate text-xs">
-                    Made with ❤️ in India © {new Date().getFullYear()}
-                  </span>
+                <div className="flex items-center gap-3">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm">
+                    <span className="text-sm font-bold">M</span>
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold text-sidebar-foreground">
+                      Magic Stocks AI
+                    </span>
+                    <span className="truncate text-xs text-sidebar-foreground/60">
+                      AI-Powered Stock Analysis
+                    </span>
+                  </div>
                 </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="gap-2">
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t">
+        <div className="px-2 py-2 text-xs text-sidebar-foreground/60 text-center">
+          Made with ❤️ in India © {new Date().getFullYear()}
+        </div>
         <NavUser />
       </SidebarFooter>
     </Sidebar>

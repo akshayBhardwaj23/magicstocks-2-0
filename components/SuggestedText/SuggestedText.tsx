@@ -1,5 +1,5 @@
 import { suggestedChatData } from "@/constants/constants";
-import { CirclePlus } from "lucide-react";
+import { MessageSquarePlus, TrendingUp, BarChart3, DollarSign } from "lucide-react";
 import React from "react";
 
 const SuggestedText = ({
@@ -7,25 +7,51 @@ const SuggestedText = ({
 }: {
   handleSuggestedText: (val: string) => void;
 }) => {
+  const getIcon = (text: string) => {
+    if (text.toLowerCase().includes('trend') || text.toLowerCase().includes('analysis')) {
+      return <TrendingUp className="h-4 w-4" />;
+    } else if (text.toLowerCase().includes('chart') || text.toLowerCase().includes('graph')) {
+      return <BarChart3 className="h-4 w-4" />;
+    } else if (text.toLowerCase().includes('price') || text.toLowerCase().includes('investment')) {
+      return <DollarSign className="h-4 w-4" />;
+    }
+    return <MessageSquarePlus className="h-4 w-4" />;
+  };
+
   return (
-    <section className="absolute bottom-0 flex overflow-x-auto whitespace-nowrap max-w-full">
-      {suggestedChatData.map((chat) => (
-        <div
-          onClick={() => handleSuggestedText(chat)}
-          key={chat}
-          className="cursor-pointer m-4 p-4 bg-slate-200 rounded-lg break-words flex items-center"
-        >
-          <div>
-            <p className="w-[180px] text-sm text-gray-500 text-wrap font-medium pr-2 ">
-              {chat}
-            </p>
-          </div>
-          <div>
-            <CirclePlus />
-          </div>
-        </div>
-      ))}
-    </section>
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-semibold text-foreground mb-2">Get started with these questions</h3>
+        <p className="text-sm text-muted-foreground">Click any suggestion to begin your conversation</p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {suggestedChatData.map((chat, index) => (
+          <button
+            onClick={() => handleSuggestedText(chat)}
+            key={chat}
+            className="group p-4 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-md transition-all duration-200 text-left"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                {getIcon(chat)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-3">
+                  {chat}
+                </p>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+      
+      <div className="text-center mt-6">
+        <p className="text-xs text-muted-foreground">
+          💡 Pro tip: Be specific in your questions for better AI responses
+        </p>
+      </div>
+    </div>
   );
 };
 
