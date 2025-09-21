@@ -198,7 +198,7 @@ const TestimonialPage = () => {
 
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                "{testimonial.content}"
+                &ldquo;{testimonial.content}&rdquo;
               </p>
             </CardContent>
           </Card>

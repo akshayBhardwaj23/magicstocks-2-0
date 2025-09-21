@@ -85,7 +85,7 @@ const SuggestedText = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {suggestedChatData.map((chat, index) => (
+          {suggestedChatData.map((chat) => (
             <button
               onClick={() => handleSuggestedText(chat)}
               key={chat}
