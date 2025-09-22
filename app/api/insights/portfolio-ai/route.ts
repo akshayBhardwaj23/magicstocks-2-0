@@ -11,6 +11,9 @@ import { perplexity } from "@/lib/customAiModel";
 import { generateText } from "ai";
 import { aiModelName } from "@/constants/constants";
 
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 export async function POST() {
   const session = await auth();
   if (!session)
@@ -24,16 +27,18 @@ export async function POST() {
 
     const conns = await BrokerConnection.find({ userId: user._id });
     const allHoldings: any[] = [];
-    for (const conn of conns) {
-      try {
-        if (conn.broker === "zerodha" && conn.accessToken) {
-          allHoldings.push(
-            ...(await normalizeZerodhaHoldings(conn.accessToken))
-          );
-        } else if (conn.broker === "upstox" && conn.accessToken) {
-          // allHoldings.push(...(await normalizeUpstoxHoldings(conn.accessToken)));
-        }
-      } catch {}
+    const tasks: Promise<any>[] = conns.map((conn: any) => {
+      if (conn.broker === "zerodha" && conn.accessToken) {
+        return normalizeZerodhaHoldings(conn.accessToken);
+      }
+      // Upstox currently not supported
+      return Promise.resolve([]);
+    });
+    const settled = await Promise.allSettled(tasks);
+    for (const s of settled) {
+      if (s.status === "fulfilled" && Array.isArray(s.value)) {
+        allHoldings.push(...s.value);
+      }
     }
 
     const prompt = `You are a financial analyst for Indian markets (NSE/BSE). Given the user's holdings (symbol, qty, avgPrice, lastPrice), provide:
@@ -44,17 +49,23 @@ export async function POST() {
 5) Keep it concise, bullet-style, INR amounts (₹), do not hallucinate unknown data.
 
 Holdings JSON:
-${JSON.stringify(allHoldings).slice(0, 10000)}
+${JSON.stringify(allHoldings).slice(0, 3000)}
 `;
 
-    const result = await generateText({
-      model: perplexity(aiModelName),
-      system:
-        "You analyze Indian equities in NSE/BSE and speak concisely in bullet points.",
-      prompt,
-      maxTokens: 900,
-    });
-    return NextResponse.json({ text: result.text });
+    const result = await Promise.race([
+      generateText({
+        model: perplexity(aiModelName),
+        system:
+          "You analyze Indian equities in NSE/BSE and speak concisely in bullet points.",
+        prompt,
+        maxTokens: 300,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), 8000)
+      ),
+    ]);
+    const text = (result as any)?.text ?? "";
+    return NextResponse.json({ text });
   } catch (error) {
     console.error("[insights/portfolio-ai] failed to generate analysis", error);
     return NextResponse.json(
