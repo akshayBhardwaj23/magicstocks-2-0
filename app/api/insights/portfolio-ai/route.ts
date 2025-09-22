@@ -16,24 +16,27 @@ export async function POST() {
   if (!session)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-  await connectMongo();
-  const user = await User.findOne({ email: session.user?.email });
-  if (!user)
-    return NextResponse.json({ message: "User not found" }, { status: 404 });
+  try {
+    await connectMongo();
+    const user = await User.findOne({ email: session.user?.email });
+    if (!user)
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-  const conns = await BrokerConnection.find({ userId: user._id });
-  const allHoldings: any[] = [];
-  for (const conn of conns) {
-    try {
-      if (conn.broker === "zerodha" && conn.accessToken) {
-        allHoldings.push(...(await normalizeZerodhaHoldings(conn.accessToken)));
-      } else if (conn.broker === "upstox" && conn.accessToken) {
-        // allHoldings.push(...(await normalizeUpstoxHoldings(conn.accessToken)));
-      }
-    } catch {}
-  }
+    const conns = await BrokerConnection.find({ userId: user._id });
+    const allHoldings: any[] = [];
+    for (const conn of conns) {
+      try {
+        if (conn.broker === "zerodha" && conn.accessToken) {
+          allHoldings.push(
+            ...(await normalizeZerodhaHoldings(conn.accessToken))
+          );
+        } else if (conn.broker === "upstox" && conn.accessToken) {
+          // allHoldings.push(...(await normalizeUpstoxHoldings(conn.accessToken)));
+        }
+      } catch {}
+    }
 
-  const prompt = `You are a financial analyst for Indian markets (NSE/BSE). Given the user's holdings (symbol, qty, avgPrice, lastPrice), provide:
+    const prompt = `You are a financial analyst for Indian markets (NSE/BSE). Given the user's holdings (symbol, qty, avgPrice, lastPrice), provide:
 1) Portfolio overview (allocation, risk concentration, unrealized P&L)
 2) Technical snapshot per major holding (trend, RSI-like note, support/resistance if relevant)
 3) Fundamental quick-take if the symbol is well-known in India
@@ -44,12 +47,19 @@ Holdings JSON:
 ${JSON.stringify(allHoldings).slice(0, 10000)}
 `;
 
-  const result = await generateText({
-    model: perplexity(aiModelName),
-    system:
-      "You analyze Indian equities in NSE/BSE and speak concisely in bullet points.",
-    prompt,
-    maxTokens: 900,
-  });
-  return NextResponse.json({ text: result.text });
+    const result = await generateText({
+      model: perplexity(aiModelName),
+      system:
+        "You analyze Indian equities in NSE/BSE and speak concisely in bullet points.",
+      prompt,
+      maxTokens: 900,
+    });
+    return NextResponse.json({ text: result.text });
+  } catch (error) {
+    console.error("[insights/portfolio-ai] failed to generate analysis", error);
+    return NextResponse.json(
+      { message: "Failed to generate analysis" },
+      { status: 502 }
+    );
+  }
 }
