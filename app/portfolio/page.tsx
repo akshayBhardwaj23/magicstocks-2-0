@@ -45,7 +45,9 @@ export default function PortfolioPage() {
       const data = await res.json();
       setHoldings(data.holdings || []);
       setInsights(data.insights || null);
-    } catch (e) {}
+    } catch (error) {
+      console.error("[portfolio] reload failed", error);
+    }
     setLoading(false);
   };
 
@@ -231,7 +233,8 @@ export default function PortfolioPage() {
                   });
                   const data = await res.json();
                   setAiText(data.text || "");
-                } catch (e) {
+                } catch (error) {
+                  console.error("[portfolio] AI analysis failed", error);
                   setAiText("Failed to generate analysis. Please try again.");
                 } finally {
                   setAnalyzing(false);
