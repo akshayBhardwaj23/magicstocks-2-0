@@ -4,7 +4,7 @@ import connectMongo from "@/lib/connect-mongo";
 import User from "@/models/User";
 import BrokerConnection from "@/models/BrokerConnection";
 import {
-  normalizeUpstoxHoldings,
+  // normalizeUpstoxHoldings,
   normalizeZerodhaHoldings,
 } from "@/lib/brokers";
 import { perplexity } from "@/lib/customAiModel";
@@ -28,7 +28,7 @@ export async function POST() {
       if (conn.broker === "zerodha" && conn.accessToken) {
         allHoldings.push(...(await normalizeZerodhaHoldings(conn.accessToken)));
       } else if (conn.broker === "upstox" && conn.accessToken) {
-        allHoldings.push(...(await normalizeUpstoxHoldings(conn.accessToken)));
+        // allHoldings.push(...(await normalizeUpstoxHoldings(conn.accessToken)));
       }
     } catch {}
   }
