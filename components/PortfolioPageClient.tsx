@@ -3,8 +3,6 @@ import PortfolioAIInsights, {
   InsightsData,
 } from "@/components/PortfolioAIInsights";
 import React, { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { ImSpinner } from "react-icons/im";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

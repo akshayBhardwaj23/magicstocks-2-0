@@ -16,8 +16,6 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  BarChart,
-  Bar,
 } from "recharts";
 import {
   TrendingUp,
