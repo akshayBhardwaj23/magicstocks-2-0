@@ -4,7 +4,7 @@ import connectMongo from "@/lib/connect-mongo";
 import BrokerConnection from "@/models/BrokerConnection";
 import User from "@/models/User";
 import {
-  normalizeUpstoxHoldings,
+  // normalizeUpstoxHoldings,
   normalizeZerodhaHoldings,
 } from "@/lib/brokers";
 import { computePortfolioInsights } from "@/lib/insights/portfolio";
@@ -22,20 +22,36 @@ export async function GET() {
   const connections = await BrokerConnection.find({ userId: user._id });
 
   const allHoldings: any[] = [];
+  const failures: string[] = [];
   for (const conn of connections) {
     try {
       if (conn.broker === "zerodha" && conn.accessToken) {
         const rows = await normalizeZerodhaHoldings(conn.accessToken);
         allHoldings.push(...rows);
       } else if (conn.broker === "upstox" && conn.accessToken) {
-        const rows = await normalizeUpstoxHoldings(conn.accessToken);
-        allHoldings.push(...rows);
+        // const rows = await normalizeUpstoxHoldings(conn.accessToken);
+        // allHoldings.push(...rows);
       }
-    } catch (e: any) {
-      // skip broker on error
+    } catch (error) {
+      console.error(
+        `[insights/portfolio] ${conn.broker} holdings fetch failed`,
+        error
+      );
+      failures.push(conn.broker);
     }
   }
 
   const insights = computePortfolioInsights(allHoldings);
-  return NextResponse.json({ holdings: allHoldings, insights });
+  if (
+    allHoldings.length === 0 &&
+    failures.length === connections.length &&
+    connections.length > 0
+  ) {
+    return NextResponse.json(
+      { message: "All broker fetches failed", failures },
+      { status: 502 }
+    );
+  }
+
+  return NextResponse.json({ holdings: allHoldings, insights, failures });
 }
