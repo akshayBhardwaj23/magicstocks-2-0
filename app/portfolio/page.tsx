@@ -229,8 +229,25 @@ export default function PortfolioPage() {
                   const res = await fetch("/api/insights/portfolio-ai", {
                     method: "POST",
                   });
-                  const data = await res.json();
-                  setAiText(data.text || "");
+                  const contentType = res.headers.get("content-type") || "";
+                  if (contentType.includes("application/json")) {
+                    const data = await res.json();
+                    if (!res.ok) {
+                      throw new Error(data?.message || "Request failed");
+                    }
+                    setAiText(data.text || "");
+                  } else {
+                    const raw = await res.text();
+                    if (!res.ok) {
+                      throw new Error(raw || "Request failed");
+                    }
+                    try {
+                      const data = JSON.parse(raw);
+                      setAiText(data.text || raw || "");
+                    } catch {
+                      setAiText(raw || "");
+                    }
+                  }
                 } catch (error) {
                   console.error("[portfolio] AI analysis failed", error);
                   setAiText("Failed to generate analysis. Please try again.");
