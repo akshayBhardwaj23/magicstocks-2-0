@@ -87,9 +87,9 @@ const HomePage = () => {
           <div className="flex flex-col gap-4 p-4 max-w-4xl mx-auto">
             {messages.length === 0 && (
               <div className="flex justify-center mb-4">
-                <Button 
-                  asChild 
-                  size="lg" 
+                <Button
+                  asChild
+                  size="lg"
                   className="bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 text-base font-semibold border border-red-400/20"
                 >
                   <Link href="/portfolio" className="flex items-center gap-2">
@@ -168,9 +168,9 @@ const HomePage = () => {
           <div className="flex flex-col gap-6 p-6 max-w-4xl mx-auto">
             {messages.length === 0 && (
               <div className="flex justify-center mb-6">
-                <Button 
-                  asChild 
-                  size="lg" 
+                <Button
+                  asChild
+                  size="lg"
                   className="bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-8 py-4 text-lg font-semibold border border-red-400/20"
                 >
                   <Link href="/portfolio" className="flex items-center gap-3">

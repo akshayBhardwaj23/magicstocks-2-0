@@ -45,6 +45,11 @@ export const data = {
       ],
     },
     {
+      title: "Portfolio",
+      url: "/portfolio",
+      icon: SquareTerminal,
+    },
+    {
       title: "Help & FAQ",
       url: "/help-faq",
       icon: CircleHelp,
