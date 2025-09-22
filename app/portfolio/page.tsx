@@ -66,54 +66,52 @@ export default function PortfolioPage() {
         </Button>
       </div>
 
-      {connections.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Linked Accounts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {connections.map((c) => (
-                <div
-                  key={c.id}
-                  className="flex items-center justify-between border rounded p-2"
-                >
-                  <div>
-                    <span className="font-medium capitalize">{c.broker}</span>
-                    {c.displayName ? (
-                      <span className="text-muted-foreground">
-                        {" "}
-                        — {c.displayName}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={async () => {
-                        await fetch("/api/brokers/disconnect", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ broker: c.broker }),
-                        });
-                        reload();
-                      }}
-                    >
-                      Disconnect
-                    </Button>
-                  </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Linked Accounts</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {connections.map((c) => (
+              <div
+                key={c.id}
+                className="flex items-center justify-between border rounded p-2"
+              >
+                <div>
+                  <span className="font-medium capitalize">{c.broker}</span>
+                  {c.displayName ? (
+                    <span className="text-muted-foreground">
+                      {" "}
+                      — {c.displayName}
+                    </span>
+                  ) : null}
                 </div>
-              ))}
-              {connections.length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  No linked accounts.
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                <div className="flex gap-2">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={async () => {
+                      await fetch("/api/brokers/disconnect", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ broker: c.broker }),
+                      });
+                      reload();
+                    }}
+                  >
+                    Disconnect
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {connections.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No linked accounts.
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {insights && (
         <Card>
