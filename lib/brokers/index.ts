@@ -1,5 +1,5 @@
 import { fetchZerodhaHoldings } from "./zerodha";
-import { fetchUpstoxHoldings } from "./upstox";
+// import { fetchUpstoxHoldings } from "./upstox";
 
 export type NormalizedHolding = {
   broker: "zerodha" | "upstox";
@@ -22,15 +22,15 @@ export async function normalizeZerodhaHoldings(accessToken: string) {
   return mapped;
 }
 
-export async function normalizeUpstoxHoldings(accessToken: string) {
-  const rows = await fetchUpstoxHoldings(accessToken);
-  const mapped: NormalizedHolding[] = rows.map((r: any) => ({
-    broker: "upstox",
-    symbol: r.symbol || r.trading_symbol || r.isin,
-    quantity: Number(r.quantity || r.qty || 0),
-    // Upstox v2 often returns prices in paise; normalize to rupees
-    avgPrice: Number(r.average_price || r.avg_price || 0) / 100,
-    lastPrice: Number(r.last_price || r.ltp || 0) / 100,
-  }));
-  return mapped;
-}
+// export async function normalizeUpstoxHoldings(accessToken: string) {
+//   const rows = await fetchUpstoxHoldings(accessToken);
+//   const mapped: NormalizedHolding[] = rows.map((r: any) => ({
+//     broker: "upstox",
+//     symbol: r.symbol || r.trading_symbol || r.isin,
+//     quantity: Number(r.quantity || r.qty || 0),
+//     // Upstox v2 often returns prices in paise; normalize to rupees
+//     avgPrice: Number(r.average_price || r.avg_price || 0) / 100,
+//     lastPrice: Number(r.last_price || r.ltp || 0) / 100,
+//   }));
+//   return mapped;
+// }
