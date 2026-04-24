@@ -7,7 +7,7 @@ import React from "react";
 export const metadata: Metadata = {
   title: "Profile | MagicStocks.ai - Future of Stock Analysis",
   description:
-    "Easily review your chat history with MagicStocks.ai for past stock analyses and recommendations. Access valuable insights for future strategy planning.",
+    "Review past AI conversations for information and education. Not a record of investment advice or trade recommendations.",
 };
 
 const ChatHistoryPage = async () => {

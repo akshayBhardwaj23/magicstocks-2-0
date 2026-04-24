@@ -137,19 +137,23 @@ function buildUIData(holdings: Holding[], insights: any): UIInsights {
 
   const conc = insights?.concentration ?? {};
   if ((conc.top1Pct ?? top1 * 100) > 30) {
-    actions.push("Trim the top holding to bring concentration below 30%.");
+    actions.push(
+      "Educational: many portfolio guides describe single-name weights above ~30% as high concentration; people often discuss this with a SEBI-registered adviser. Not a trade instruction."
+    );
   }
   if ((conc.top3Pct ?? top3 * 100) > 60) {
-    actions.push("Rebalance top 3 holdings to reduce drawdown risk.");
+    actions.push(
+      "Educational: a large share of value in a few names is sometimes discussed in textbooks as concentration risk. Use this only for learning, not as a reason to transact."
+    );
   }
   if (allocations.length < 5) {
     notes.push(
-      "Portfolio breadth is low; consider adding diversified names/ETFs."
+      "For learning: a small number of line items can mean a narrow book on paper; diversification concepts are often taught alongside ETFs and index funds in general material."
     );
   }
   if (riskScore >= 0.66)
     notes.push(
-      "Overall risk is high; prioritize diversification and position sizing."
+      "The model’s simple risk score is elevated; treat it as a conversation starter, not a professional risk assessment or reason to change positions."
     );
 
   // events (placeholder – populate from your earnings/dividend feed later)
@@ -210,12 +214,12 @@ export async function POST() {
     const ui: UIInsights = buildUIData(allHoldings, insights);
     if (ui.actions.length === 0) {
       ui.actions.push(
-        "Review position sizing and rebalance if any single stock exceeds 25–30% weight."
+        "Educational: if you are comparing position sizes, general reading often discusses 25–30% as a high weight in one name—only for your own research with a qualified professional, not as guidance from MagicStocks."
       );
     }
     if (ui.notes.length === 0) {
       ui.notes.push(
-        "No major risks detected by the model. Continue monitoring earnings and sector rotation."
+        "The automated summary did not add extra learning notes. Public filings and NSE/BSE data remain the authoritative sources; this app does not provide research analyst reports."
       );
     }
 
@@ -224,7 +228,7 @@ export async function POST() {
     const current = ui.kpis.current || 0;
     let cagr = { low: 8, mid: 12, high: 16 };
     try {
-      const projPrompt = `You are a financial analyst. Based on the following portfolio snapshot, estimate reasonable CAGR percentages for the next decade for a diversified Indian equity portfolio.
+      const projPrompt = `You are helping with a PURELY ILLUSTRATIVE education exercise on hypothetical compounding, not a promise of returns. The user is not to treat this as financial advice. Based loosely on the snapshot below, output three integer CAGR percentages (low/mid/high) that could be used for classroom-style discussion only of how compounding works numerically. Do not imply the user's portfolio will achieve these rates.
 
 Only output strict JSON with integer percentages and no extra text, in this shape:
 {"cagr_low":10,"cagr_mid":12,"cagr_high":15}
@@ -282,7 +286,9 @@ Diversification note: ${insights.diversificationNote || "none"}`;
     (ui as any).projection = { cagr, value5y, value10y };
 
     // ---------- AI text analysis (kept, but we’ll return alongside UI) ----------
-    const prompt = `You are a professional financial analyst. Analyze the user’s stock portfolio based on the following data:
+    const prompt = `You are producing INFORMATIONAL and EDUCATIONAL commentary for Indian retail users, not investment advice. MagicStocks is not SEBI-registered. You must NOT tell the user to buy, sell, hold, rebalance, or "trim" positions, and you must not give a verdict like "healthy portfolio" that could be read as a recommendation. Use neutral, teaching language: "some educational materials say…", "one could review… with a professional".
+
+Use this data:
 
 [Holdings]
 ${JSON.stringify(
@@ -307,7 +313,7 @@ ${JSON.stringify(
       broker: p.broker,
       symbol: p.symbol,
       weightPct: Number(p.weightPct?.toFixed?.(1) || p.weightPct || 0),
-      recommendation: p.recommendation,
+      educationalNote: p.educationalNote,
     })),
     winners: (insights.winners || []).map((w: any) => ({
       broker: w.broker,
@@ -325,18 +331,19 @@ ${JSON.stringify(
   0
 ).slice(0, 4000)}
 
-Your task:
-1. Performance Overview – Summarize overall portfolio health.
-2. Risk & Diversification – Assess diversification & concentration risks.
-3. Winners & Losers – Identify strongest and weakest stocks with reasoning.
-4. Opportunities & Risks Ahead – Balanced risks/opportunities.
-5. Actionable Insights – Practical steps (rebalancing, trimming, diversification).
-6. Tone – Concise, retail-friendly. Use ₹ for amounts; mark positives with ✅ and negatives with ⚠️.
+Your task (education only):
+1. Performance overview – what the numbers show in plain terms (not "you should…").
+2. Diversification & concentration – discuss concepts, not what the user should do.
+3. Names with stronger vs weaker recent P&L in this snapshot – descriptive only.
+4. Broad themes people read about in markets (risks, opportunities) – generic, not personal advice.
+5. Close with: this is not SEBI-regulated advice; talk to a SEBI-registered investment adviser for decisions.
+
+Concise, retail-friendly. Use ₹ for amounts; mark points with ✅ or ⚠️ as neutral highlights.
 
 Output:
-- 2–3 line executive summary
-- Sections: Performance, Diversification, Winners & Losers, Opportunities, Recommendations
-- Conclude with a verdict (healthy / risky / needs adjustments).`;
+- 2–3 line summary (informational, not a recommendation)
+- Sections: Overview, Diversification concepts, P&L snapshot, Broader context (educational)
+- End with a one-line non-advisory disclaimer.`;
 
     let text = "";
     try {
@@ -344,7 +351,7 @@ Output:
         generateText({
           model: perplexity(aiModelName),
           system:
-            "You analyze Indian equities in NSE/BSE and speak concisely in bullet points.",
+            "You produce educational, non-advisory Indian market commentary. Never output buy/sell/hold, personal rebalancing, or professional verdicts. Cite SEBI registration where disclaimers are needed.",
           prompt,
           maxTokens: 600,
         }),

@@ -58,7 +58,7 @@ export function AiSummaryCard({
     w.document.write(`
       <html>
         <head>
-          <title>AI Summary</title>
+          <title>Educational AI context</title>
           <style>
             body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; line-height: 1.5; padding: 24px; }
             h1,h2,h3 { margin-top: 1.2em; }
@@ -90,7 +90,7 @@ export function AiSummaryCard({
     <Card className="mt-4 shadow-sm border-border/60">
       <CardHeader className="pb-3">
         <div className="flex items-end justify-between gap-2">
-          <CardTitle className="text-base">AI Summary</CardTitle>
+          <CardTitle className="text-base">Educational AI context</CardTitle>
 
           <div className="flex items-center gap-2">
             <Button
@@ -121,12 +121,12 @@ export function AiSummaryCard({
       <CardContent>
         {loading && !safeText ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground p-4">
-            <ImSpinner className="animate-spin" /> Generating analysis…
+            <ImSpinner className="animate-spin" /> Generating context…
           </div>
         ) : !safeText ? (
           <div className="text-sm text-muted-foreground p-4">
-            Click <span className="font-medium">Run Analysis</span> to generate
-            AI insights.
+            Click <span className="font-medium">Run AI context</span> to
+            generate educational text (not investment advice).
           </div>
         ) : (
           <>

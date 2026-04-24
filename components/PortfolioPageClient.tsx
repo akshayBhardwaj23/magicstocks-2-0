@@ -27,17 +27,17 @@ export default function PortfolioPageClient() {
   const [loading, setLoading] = useState(false);
   const [aiUi, setAiUi] = useState<InsightsData | null>(null);
 
-  const linkZerodha = async () => {
-    const res = await fetch("/api/brokers/zerodha/auth");
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-  };
-
-  const linkUpstox = async () => {
-    const res = await fetch("/api/brokers/upstox/auth");
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-  };
+  // Temporarily disabled — re-enable when broker OAuth flow should be shown again.
+  // const linkZerodha = async () => {
+  //   const res = await fetch("/api/brokers/zerodha/auth");
+  //   const data = await res.json();
+  //   if (data.url) window.location.href = data.url;
+  // };
+  // const linkUpstox = async () => {
+  //   const res = await fetch("/api/brokers/upstox/auth");
+  //   const data = await res.json();
+  //   if (data.url) window.location.href = data.url;
+  // };
 
   const fallbackData: InsightsData = {
     kpis: {
@@ -153,7 +153,7 @@ export default function PortfolioPageClient() {
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm grid place-items-center">
           <div className="rounded-2xl bg-white text-black px-6 py-4 shadow-xl flex items-center gap-3">
             <ImSpinner className="animate-spin" />
-            <span>Analyzing portfolio…</span>
+            <span>Loading AI context…</span>
           </div>
         </div>
       )}
@@ -167,12 +167,13 @@ export default function PortfolioPageClient() {
               Portfolio
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Link your brokers, view insights, and analyze your positions with
-              AI.
+              View holdings and explore educational context with AI when
+              available (not investment advice). In-app broker linking is
+              paused for now.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={linkZerodha} className="rounded-2xl">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* <Button onClick={linkZerodha} className="rounded-2xl">
               Link Zerodha
             </Button>
             <Button
@@ -181,7 +182,7 @@ export default function PortfolioPageClient() {
               className="rounded-2xl"
             >
               Link Upstox
-            </Button>
+            </Button> */}
             <Button
               variant="outline"
               onClick={reload}
@@ -243,7 +244,9 @@ export default function PortfolioPageClient() {
                 ))}
                 {connections.length === 0 && (
                   <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">
-                    No linked accounts yet. Connect a broker to get started.
+                    No linked accounts. Broker linking is temporarily
+                    disabled; any existing link will still appear here if
+                    present.
                   </div>
                 )}
               </div>
@@ -318,7 +321,7 @@ export default function PortfolioPageClient() {
                               <span>{Number(p.weightPct).toFixed(1)}%</span>
                             </div>
                             <div className="mt-1 text-xs text-muted-foreground">
-                              {p.recommendation} — {p.rationale}
+                              {p.educationalNote}
                             </div>
                           </div>
                         ))}
@@ -383,7 +386,8 @@ export default function PortfolioPageClient() {
                         className="p-6 text-center text-muted-foreground"
                         colSpan={5}
                       >
-                        No holdings yet. Link your broker to load data.
+                        No holdings loaded. Add data when broker linking
+                        returns or another input path is available.
                       </td>
                     </tr>
                   )}
@@ -427,7 +431,7 @@ export default function PortfolioPageClient() {
                 setAiText(raw || "");
               }
             } catch {
-              setAiText("Failed to generate analysis.");
+              setAiText("Failed to load educational context.");
             } finally {
               setAnalyzing(false);
             }

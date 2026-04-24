@@ -1,11 +1,12 @@
 import { NormalizedHolding } from "@/lib/brokers";
 
+/** Educational note only — not buy/sell/hold advice */
 export type HoldingInsight = NormalizedHolding & {
   weightPct: number;
   unrealizedPnl?: number;
   pnlPct?: number;
-  recommendation?: "Buy" | "Sell" | "Hold";
-  rationale?: string;
+  /** Short factual/educational line (price vs cost context, not a trade call) */
+  educationalNote: string;
 };
 
 export type PortfolioInsights = {
@@ -27,7 +28,6 @@ export type PortfolioInsights = {
 export function computePortfolioInsights(
   holdings: NormalizedHolding[]
 ): PortfolioInsights {
-  // Basic PnL/weights and naive recommendations as a first version
   const enriched: HoldingInsight[] = holdings.map((h) => {
     const invested = h.quantity * h.avgPrice;
     const current = h.quantity * (h.lastPrice || h.avgPrice);
@@ -36,16 +36,16 @@ export function computePortfolioInsights(
       h.avgPrice > 0
         ? (((h.lastPrice || h.avgPrice) - h.avgPrice) / h.avgPrice) * 100
         : 0;
-    const rec = computeSimpleRecommendation(
+    const educationalNote = buildEducationalNote(
       h.avgPrice,
-      h.lastPrice || h.avgPrice
+      h.lastPrice || h.avgPrice,
+      pct
     );
     return {
       ...h,
       unrealizedPnl: unrealized,
       pnlPct: pct,
-      recommendation: rec.recommendation,
-      rationale: rec.rationale,
+      educationalNote,
       weightPct: 0,
     };
   });
@@ -71,7 +71,7 @@ export function computePortfolioInsights(
 
   const diversificationNote =
     topPositions.length > 0 && topPositions[0].weightPct > 40
-      ? "High concentration risk: largest position exceeds 40% of portfolio."
+      ? "For context: the largest position is above 40% of portfolio value; educational materials often discuss this as a high level of position concentration to be aware of."
       : undefined;
 
   const concentration = computeConcentration(enriched);
@@ -102,24 +102,17 @@ export function computePortfolioInsights(
   };
 }
 
-function computeSimpleRecommendation(avg: number, last: number) {
-  const changePct = last > 0 ? ((last - avg) / avg) * 100 : 0;
-  if (changePct > 20)
-    return {
-      recommendation: "Hold" as const,
-      rationale:
-        "Strong gains; avoid chasing. Consider partial profit booking if thesis changed.",
-    };
-  if (changePct < -15)
-    return {
-      recommendation: "Hold" as const,
-      rationale:
-        "Significant drawdown; reassess fundamentals before averaging or exiting.",
-    };
-  return {
-    recommendation: "Buy" as const,
-    rationale: "Near average price; add gradually if fundamentals intact.",
-  };
+/**
+ * Price vs cost context for learning; explicitly not trading instruction.
+ */
+function buildEducationalNote(avg: number, last: number, changePct: number) {
+  if (changePct > 20) {
+    return "Last price is well above your average cost in this data set—a pattern people sometimes review against their own plan (not a suggestion to buy or sell).";
+  }
+  if (changePct < -15) {
+    return "Last price is well below your average cost in this data set—factors to study include fundamentals and news, not a suggestion to add or exit.";
+  }
+  return "Last price is in a moderate range compared to your average cost in this data set—one input among many in portfolio learning.";
 }
 
 function round2(n: number) {
