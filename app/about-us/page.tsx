@@ -13,7 +13,7 @@ import React from "react";
 export const metadata: Metadata = {
   title: "About Us | MagicStocks.ai - Future of Stock Analysis",
   description:
-    "Learn about MagicStocks.ai, the AI-driven platform revolutionizing stock analysis. Our mission is to empower investors with data-driven insights and smart investment strategies for better stock market decisions.",
+    "Learn about MagicStocks.ai: AI-powered information and learning tools for Indian stock markets, not a substitute for a SEBI-registered investment adviser.",
 };
 
 const AboutPage = () => {
@@ -28,24 +28,23 @@ const AboutPage = () => {
           </CardHeader>
           <CardContent className="px-6 py-4 text-gray-700 dark:text-gray-300">
             <p className="mb-4 text-lg">
-              Welcome to <span className="font-semibold">MagicStocks.ai</span>,
-              your AI-powered partner for smarter investing. We believe stock
-              market insights should be accessible, accurate, and actionable,
-              helping you make confident investment decisions without the
-              complexity.
+              Welcome to <span className="font-semibold">MagicStocks.ai</span>.
+              We help people understand Indian stock markets with information and
+              education—data, context, and explainers—not personalized
+              investment advice. We are not SEBI-registered as an investment
+              adviser or research analyst.
             </p>
             <p className="mb-4 text-lg">
-              MagicStocks.ai leverages advanced AI technology to analyze the
-              market, providing insights driven by technical, fundamental, and
-              sentiment analysis. Whether you are a seasoned investor or just
-              starting out, our smart chatbot delivers relevant stock analysis
-              right at your fingertips.
+              Our tools combine AI with public market data so you can study
+              companies, indices, and ideas in one place. Whether you are
+              experienced or new to markets, the focus is on learning and
+              research workflows you control.
             </p>
             <p className="mb-4 text-lg">
-              Our mission is to empower investors by bringing together
-              cutting-edge AI and reliable market data in one seamless platform.
-              Say goodbye to endless research and hello to a simpler, smarter
-              approach to the stock market with MagicStocks.ai.
+              For decisions that affect your money, we encourage you to consult a
+              SEBI-registered investment adviser or other qualified
+              professional. MagicStocks is here to support understanding, not to
+              replace that relationship.
             </p>
           </CardContent>
           <CardFooter className="flex justify-center pt-4">

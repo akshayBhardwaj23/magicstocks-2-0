@@ -107,7 +107,7 @@ const SuggestedText = ({
 
         <div className="text-center mt-6">
           <p className="text-xs text-muted-foreground">
-            💡 Pro tip: Be specific in your questions for better AI responses
+            Tip: be specific; answers are for learning, not buy/sell advice
           </p>
         </div>
       </div>

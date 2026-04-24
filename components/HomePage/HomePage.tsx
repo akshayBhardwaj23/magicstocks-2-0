@@ -94,7 +94,7 @@ const HomePage = () => {
                 >
                   <Link href="/portfolio" className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    Portfolio Analysis
+                    Portfolio (education)
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
@@ -175,7 +175,7 @@ const HomePage = () => {
                 >
                   <Link href="/portfolio" className="flex items-center gap-3">
                     <TrendingUp className="h-6 w-6" />
-                    Portfolio Analysis
+                    Portfolio (education)
                     <ArrowRight className="h-5 w-5" />
                   </Link>
                 </Button>

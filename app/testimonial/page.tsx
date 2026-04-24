@@ -10,100 +10,103 @@ const TestimonialPage = () => {
   const testimonials = [
     {
       name: "Rajesh Kumar",
-      role: "Software Engineer & Investor",
-      location: "Bangalore, India",
+      role: "Software engineer",
+      location: "Bengaluru, India",
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "MagicStocks.ai has revolutionized my investment approach. The AI&apos;s analysis of Reliance Industries helped me identify a 25% gain opportunity I would have missed. The portfolio optimization suggestions are incredibly accurate.",
-      highlight: "25% gain on Reliance Industries",
+        "I use it to read up on large caps before I dig into annual reports. The explanations are clear and it stays away from telling me what to buy—that matches how I work with my adviser.",
+      highlight: "Faster research prep",
       verified: true,
-      broker: "Zerodha",
+      broker: "User",
     },
     {
       name: "Priya Sharma",
-      role: "Financial Advisor",
+      role: "Chartered accountant",
       location: "Mumbai, India",
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "As a financial advisor, I use MagicStocks.ai to provide better insights to my clients. The AI&apos;s fundamental analysis is thorough and the risk assessment features help me create more balanced portfolios.",
-      highlight: "Improved client portfolio performance by 18%",
+        "Helpful for vocabulary and context on sectors and ratios. I still rely on SEBI-registered advisers for client portfolios, but this saves time on first-pass reading.",
+      highlight: "Clearer fundamentals context",
       verified: true,
-      broker: "Upstox",
+      broker: "User",
     },
     {
       name: "Arjun Patel",
-      role: "Day Trader",
+      role: "Retail participant",
       location: "Delhi, India",
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "The real-time analysis and market sentiment tracking have been game-changers for my day trading. The AI alerts me to market shifts before they become obvious, giving me a significant edge.",
-      highlight: "40% improvement in day trading profits",
+        "I wanted plain-English notes on what news flow and sentiment talk about, without ‘tips’. The product positioning as education-first works for me.",
+      highlight: "News and sentiment in one place",
       verified: true,
-      broker: "Zerodha",
+      broker: "User",
     },
     {
       name: "Sneha Reddy",
-      role: "Business Owner",
+      role: "Business owner",
       location: "Hyderabad, India",
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "I was new to stock investing when I started using MagicStocks.ai. The AI&apos;s explanations are so clear and educational. It&apos;s like having a personal financial advisor available 24/7. My portfolio has grown 35% in 6 months.",
-      highlight: "35% portfolio growth in 6 months",
+        "As someone who was new to markets, I liked that it focuses on learning and data. I use it alongside courses and my own reading—not as a replacement for professional advice.",
+      highlight: "Beginner-friendly framing",
       verified: true,
-      broker: "Upstox",
+      broker: "User",
     },
     {
       name: "Vikram Singh",
-      role: "Retired Banker",
+      role: "Retired banker",
       location: "Chennai, India",
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "After retirement, I needed a reliable way to manage my investments. MagicStocks.ai&apos;s conservative analysis approach and risk management features give me confidence in my investment decisions.",
-      highlight: "Stable 12% annual returns",
+        "The portfolio view helps me see weights and P&L in one screen. I treat the text as context only and discuss actions with my family adviser.",
+      highlight: "Holdings snapshot + notes",
       verified: true,
-      broker: "Zerodha",
+      broker: "User",
     },
     {
       name: "Meera Joshi",
-      role: "IT Professional",
+      role: "IT professional",
       location: "Pune, India",
       image: "/api/placeholder/60/60",
       rating: 5,
       content:
-        "The sector analysis and market trends predictions are incredibly accurate. I&apos;ve been able to diversify my portfolio effectively and avoid several market downturns thanks to the AI&apos;s early warnings.",
-      highlight: "Avoided 3 major market corrections",
+        "Sector overviews are useful for following themes without the app pushing trades. I appreciate the explicit not-advice disclaimers.",
+      highlight: "Theme-level education",
       verified: true,
-      broker: "Upstox",
+      broker: "User",
     },
   ];
 
   const stats = [
-    { icon: Users, label: "Active Users", value: "10,000+" },
-    { icon: TrendingUp, label: "Average Returns", value: "18.5%" },
-    { icon: Shield, label: "Data Security", value: "100%" },
-    { icon: Zap, label: "Response Time", value: "< 2s" },
+    { icon: Users, label: "Community", value: "Growing" },
+    { icon: TrendingUp, label: "Focus", value: "Education" },
+    { icon: Shield, label: "Encryption", value: "In transit" },
+    { icon: Zap, label: "Typical reply", value: "Fast" },
   ];
 
   const features = [
     {
       icon: Target,
-      title: "Accurate Predictions",
-      description: "Our AI achieves 78% accuracy in stock price predictions",
+      title: "Information & education",
+      description:
+        "Explanations and data-oriented chat—not personalized buy or sell calls.",
     },
     {
       icon: TrendingUp,
-      title: "Portfolio Growth",
-      description: "Users see average portfolio growth of 18.5% annually",
+      title: "India-first context",
+      description:
+        "NSE, BSE, and Indian market language where relevant, with source transparency.",
     },
     {
       icon: Shield,
-      title: "Risk Management",
-      description: "Advanced risk assessment helps protect investments",
+      title: "You stay in control",
+      description:
+        "We highlight that we are not SEBI-registered; professional advice is your choice.",
     },
   ];
 
@@ -115,8 +118,8 @@ const TestimonialPage = () => {
           What Our Users Say
         </h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-          Join thousands of successful investors who have transformed their
-          investment strategies with MagicStocks.ai&apos;s AI-powered insights.
+          How people use MagicStocks for research and learning. Not
+          performance claims; individual results vary. Not investment advice.
         </p>
 
         {/* Stats */}
@@ -234,29 +237,27 @@ const TestimonialPage = () => {
       <Card className="text-center bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <h2 className="text-3xl font-bold text-foreground mb-4">
-            Ready to Transform Your Investment Strategy?
+            Explore markets on your terms
           </h2>
           <p className="text-lg text-muted-foreground mb-6">
-            Join thousands of successful investors who trust MagicStocks.ai for
-            their investment decisions.
+            Sign in to use credits for AI-assisted learning. We do not provide
+            SEBI-regulated investment advice.
           </p>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">
-                Start Free Trial
-              </div>
+              <div className="text-2xl font-bold text-foreground">Credits</div>
               <div className="text-sm text-muted-foreground">
-                Get 10 free credits to explore
+                Pay per use—see current offers on Plans
               </div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-foreground">
-                No Credit Card Required
+                Your research
               </div>
               <div className="text-sm text-muted-foreground">
-                Start investing smarter today
+                We help you read and learn—not decide for you
               </div>
             </div>
           </div>
@@ -266,13 +267,13 @@ const TestimonialPage = () => {
       {/* Trust Indicators */}
       <div className="mt-16 text-center">
         <h3 className="text-xl font-semibold text-foreground mb-6">
-          Trusted by Investors Across India
+          Built for Indian market learners
         </h3>
         <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
-          <div className="text-sm font-medium">Zerodha Integration</div>
-          <div className="text-sm font-medium">Upstox Integration</div>
-          <div className="text-sm font-medium">Bank-Level Security</div>
-          <div className="text-sm font-medium">24/7 AI Support</div>
+          <div className="text-sm font-medium">India-focused content</div>
+          <div className="text-sm font-medium">Encrypted transport</div>
+          <div className="text-sm font-medium">AI chat (non-advisory)</div>
+          <div className="text-sm font-medium">Portfolio tools evolving</div>
         </div>
       </div>
     </div>

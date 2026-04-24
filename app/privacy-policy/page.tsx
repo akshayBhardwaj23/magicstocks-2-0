@@ -61,11 +61,12 @@ const PrivacyPage = () => {
             1.3 Stock Market Data
           </h3>
           <p className="mb-4">
-            {`In the course of providing stock market analysis, we may collect
-            real-time and historical data, but this is typically anonymized and
-            used solely to enhance the AI models. We do not retain this stock
-            data in a manner that can be tied to an individual user unless
-            you've explicitly linked a brokerage account.`}
+            {`In the course of providing market information and education, we may
+            process real-time and historical data; much of this is used in
+            aggregate to improve the service. We do not retain stock data in a
+            way that identifies you unless you have chosen features that
+            require it (for example, if optional brokerage linking is offered
+            in the future and you connect an account).`}
           </p>
           <h2 className="text-xl font-semibold mb-2">
             2. How We Use Your Information
@@ -104,9 +105,10 @@ const PrivacyPage = () => {
             3.1 With Your Consent
           </h3>
           <p className="mb-4">
-            We may share your data with third-party services (such as brokerage
-            platforms, or sign-up options) only when you explicitly authorize us
-            to do so.
+            We may share your data with third-party services (such as
+            sign-in providers, analytics, or in the future brokerage platforms
+            if linking is available) only when you explicitly authorize us to do
+            so and as described at the time of that feature.
           </p>
           <h3 className="text-lg font-semibold mt-4 mb-2">
             3.2 Service Providers

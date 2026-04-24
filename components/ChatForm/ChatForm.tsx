@@ -78,7 +78,7 @@ const ChatForm = ({
         <div className="flex gap-2 md:gap-3 items-end">
           <div className="flex-1 relative">
             <Textarea
-              placeholder="Ask me anything about stocks, market analysis, or investment strategies..."
+              placeholder="Ask about companies, sectors, or how markets work (information and education only)…"
               className="min-h-[50px] md:min-h-[60px] max-h-[100px] md:max-h-[120px] resize-none pr-12 rounded-xl md:rounded-2xl border-2 focus:border-primary/50 transition-colors text-sm"
               value={input}
               onChange={handleInputChange}

@@ -36,17 +36,17 @@ const HelpPage = () => {
     {
       question: "What is MagicStocks.ai and how does it work?",
       answer:
-        "MagicStocks.ai is an AI-powered stock analysis platform that uses advanced machine learning algorithms to provide real-time stock analysis, market predictions, and investment insights. Our AI analyzes market data, company fundamentals, and market sentiment to help you make informed investment decisions.",
+        "MagicStocks.ai is an information and education platform for Indian markets. It uses AI to help you explore public data, company context, and market topics in plain language. It does not provide SEBI-regulated investment advice, research reports, or personalized buy/sell recommendations. For investment decisions, speak to a SEBI-registered investment adviser or other qualified professional.",
     },
     {
-      question: "How accurate are the AI predictions?",
+      question: "Does the AI predict stock prices or tell me what to buy?",
       answer:
-        "While our AI provides sophisticated analysis based on historical data and market patterns, it's important to remember that all investments carry risk. Our AI is designed to assist with research and analysis, but we recommend consulting with financial advisors and conducting your own research before making investment decisions. Past performance does not guarantee future results.",
+        "No. We do not position the product as a prediction or tip service. Outputs are for learning and research support. Markets are uncertain; any numbers or scenarios are illustrative unless clearly sourced. Always do your own diligence and use licensed professionals when you need advice.",
     },
     {
       question: "How do I get started with MagicStocks.ai?",
       answer:
-        "Getting started is easy! Simply sign up for an account, purchase credits, and start asking questions about stocks, market analysis, or investment strategies. You can also connect your broker account (Zerodha or Upstox) for personalized portfolio analysis.",
+        "Sign up for an account, purchase credits, and start with questions about companies, sectors, or how markets work. Optional in-app broker account linking is temporarily unavailable; the portfolio area will support other ways to add context when we ship them—not a substitute for professional advice.",
     },
     {
       question: "What are credits and how do they work?",
@@ -56,17 +56,17 @@ const HelpPage = () => {
     {
       question: "Can I connect my existing broker account?",
       answer:
-        "Yes! We support integration with Zerodha and Upstox. Once connected, you can get personalized portfolio analysis, track your holdings, and receive AI-powered insights about your investments. All connections are secure and encrypted.",
+        "Not in the app right now—broker account linking (e.g. via supported Indian brokers) is temporarily turned off. When it returns, it would let you view your holdings for educational context only, not personalized investment advice. We will describe security and data handling in product updates at that time.",
     },
     {
       question: "Is my data secure?",
       answer:
-        "Absolutely. We use bank-level encryption to protect your data. Your broker credentials are securely stored and never shared with third parties. We comply with all financial data protection regulations and maintain strict security protocols.",
+        "We use strong encryption in transit and protect account data. If broker linking is offered again in the future, credentials or tokens would be stored securely and not sold to third parties. We work to follow applicable data protection requirements.",
     },
     {
-      question: "What types of analysis can I get?",
+      question: "What can I explore with the AI?",
       answer:
-        "You can get various types of analysis including: stock price predictions, technical analysis, fundamental analysis, market sentiment analysis, portfolio optimization suggestions, risk assessment, and sector analysis. Our AI can also answer specific questions about companies, industries, or market conditions.",
+        "You can ask for educational explanations: how indicators are read, what recent news and filings discuss, sector themes, and high-level risk ideas people study in textbooks—not trade instructions. For portfolio-linked views, we show data and learning-oriented notes, not recommendations to buy, sell, or rebalance.",
     },
     {
       question: "How do I cancel my subscription?",
@@ -81,7 +81,7 @@ const HelpPage = () => {
     {
       question: "Can I use MagicStocks.ai on mobile devices?",
       answer:
-        "Yes! Our platform is fully responsive and works seamlessly on mobile devices, tablets, and desktops. You can access all features including AI chat, portfolio analysis, and broker integration from any device.",
+        "Yes! Our platform is fully responsive and works on mobile, tablets, and desktops. You can use AI chat and portfolio areas from any device. Optional broker linking is currently unavailable; features may change as we release updates.",
     },
   ];
 
@@ -99,14 +99,14 @@ const HelpPage = () => {
       href: "#billing",
     },
     {
-      title: "Broker Integration",
-      description: "Connect Zerodha or Upstox",
+      title: "Portfolio",
+      description: "Broker linking paused; more options coming",
       icon: Shield,
       href: "#brokers",
     },
     {
-      title: "AI Analysis",
-      description: "Understanding AI predictions",
+      title: "AI & education",
+      description: "How we use AI (non-advisory)",
       icon: Bot,
       href: "#ai-analysis",
     },
@@ -310,11 +310,12 @@ const HelpPage = () => {
       {/* Footer Note */}
       <div className="text-center mt-12 p-6 bg-muted/50 rounded-lg">
         <p className="text-sm text-muted-foreground">
-          <strong>Disclaimer:</strong> MagicStocks.ai provides AI-powered
-          analysis for informational purposes only. This is not financial
-          advice. Always consult with qualified financial advisors before making
-          investment decisions. Past performance does not guarantee future
-          results. Investments are subject to market risks.
+          <strong>Disclaimer:</strong> MagicStocks.ai provides information and
+          education only. We are not SEBI-registered as an investment adviser or
+          research analyst. Nothing here is investment, legal, or tax advice.
+          Consult a SEBI-registered investment adviser or other qualified
+          professional before transacting. Past performance does not guarantee
+          future results. Investments are subject to market risks.
         </p>
       </div>
     </div>

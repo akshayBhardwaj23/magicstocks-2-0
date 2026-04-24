@@ -88,6 +88,15 @@ const TermsPage = () => {
             advice. You are solely responsible for making your own investment
             decisions, and any reliance on the AI analysis is at your own risk.
           </p>
+          <p className="mb-4">
+            MagicStocks.ai is not registered with the Securities and Exchange
+            Board of India (SEBI) as an investment adviser, research analyst, or
+            other regulated intermediary. Outputs are not &quot;research
+            reports&quot; or &quot;investment advice&quot; as defined under
+            applicable Indian securities laws. If you need personalized
+            recommendations, use a SEBI-registered investment adviser or other
+            qualified professional.
+          </p>
 
           <h2 className="text-2xl font-bold mt-8 mb-4">
             3. User Responsibilities
