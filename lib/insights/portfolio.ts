@@ -27,22 +27,37 @@ export type PortfolioInsights = {
   assetAllocation?: { [assetType: string]: number };
 };
 
+/**
+ * Resolve the INR average price for a row. Prefers the frozen `avgPriceInr`
+ * stamped at write time; falls back to native `avgPrice` (which is correct for
+ * legacy INR rows but would under-state foreign rows — those should always
+ * have `*Inr` populated by the upload/edit pipeline).
+ */
+function avgInr(h: NormalizedHolding): number {
+  if (h.avgPriceInr != null && Number.isFinite(h.avgPriceInr))
+    return Number(h.avgPriceInr);
+  return Number(h.avgPrice) || 0;
+}
+
+function lastInr(h: NormalizedHolding): number {
+  if (h.lastPriceInr != null && Number.isFinite(h.lastPriceInr))
+    return Number(h.lastPriceInr);
+  if (h.lastPrice != null && Number.isFinite(Number(h.lastPrice)))
+    return Number(h.lastPrice);
+  return avgInr(h);
+}
+
 export function computePortfolioInsights(
   holdings: NormalizedHolding[]
 ): PortfolioInsights {
   const enriched: HoldingInsight[] = holdings.map((h) => {
-    const invested = h.quantity * h.avgPrice;
-    const current = h.quantity * (h.lastPrice || h.avgPrice);
+    const avg = avgInr(h);
+    const last = lastInr(h);
+    const invested = h.quantity * avg;
+    const current = h.quantity * last;
     const unrealized = current - invested;
-    const pct =
-      h.avgPrice > 0
-        ? (((h.lastPrice || h.avgPrice) - h.avgPrice) / h.avgPrice) * 100
-        : 0;
-    const educationalNote = buildEducationalNote(
-      h.avgPrice,
-      h.lastPrice || h.avgPrice,
-      pct
-    );
+    const pct = avg > 0 ? ((last - avg) / avg) * 100 : 0;
+    const educationalNote = buildEducationalNote(avg, last, pct);
     return {
       ...h,
       unrealizedPnl: unrealized,
@@ -53,17 +68,17 @@ export function computePortfolioInsights(
   });
 
   const totalCurrent = enriched.reduce(
-    (sum, r) => sum + r.quantity * (r.lastPrice || r.avgPrice),
+    (sum, r) => sum + r.quantity * lastInr(r),
     0
   );
   const totalInvested = enriched.reduce(
-    (sum, r) => sum + r.quantity * r.avgPrice,
+    (sum, r) => sum + r.quantity * avgInr(r),
     0
   );
   const totalUnrealizedPnl = totalCurrent - totalInvested;
 
   for (const r of enriched) {
-    const current = r.quantity * (r.lastPrice || r.avgPrice);
+    const current = r.quantity * lastInr(r);
     r.weightPct = totalCurrent > 0 ? (current / totalCurrent) * 100 : 0;
   }
 

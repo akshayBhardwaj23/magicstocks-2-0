@@ -163,6 +163,7 @@ export default function PortfolioPageClient() {
   const [savingEdit, setSavingEdit] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editRows, setEditRows] = useState<EditableRow[]>([]);
+  const [uploadMode, setUploadMode] = useState<"merge" | "replace">("merge");
   const [dataSource, setDataSource] =
     useState<"screenshot" | "broker" | "none">("none");
   const [snapshotSource, setSnapshotSource] = useState<string | null>(null);
@@ -285,7 +286,9 @@ export default function PortfolioPageClient() {
   const showDiffToast = (
     diff: any,
     diffSummary: string,
-    hasPrevious: boolean
+    hasPrevious: boolean,
+    parsedCount: number,
+    mode: "merge" | "replace"
   ) => {
     if (!hasPrevious) {
       toast({
@@ -294,9 +297,18 @@ export default function PortfolioPageClient() {
       });
       return;
     }
+    if (mode === "replace") {
+      toast({
+        title: "Snapshot replaced",
+        description: diffSummary || "Latest snapshot saved.",
+      });
+      return;
+    }
     toast({
-      title: "Snapshot updated",
-      description: diffSummary || "Latest snapshot saved.",
+      title: "Holdings merged",
+      description:
+        `${parsedCount} row${parsedCount === 1 ? "" : "s"} read from screenshot · ` +
+        (diffSummary || "no changes vs previous"),
     });
   };
 
@@ -306,6 +318,7 @@ export default function PortfolioPageClient() {
     try {
       const formData = new FormData();
       for (const f of Array.from(files)) formData.append("files", f);
+      formData.append("mode", uploadMode);
       const res = await fetch("/api/portfolio/upload", {
         method: "POST",
         body: formData,
@@ -321,7 +334,13 @@ export default function PortfolioPageClient() {
         });
         return;
       }
-      showDiffToast(json.diff, json.diffSummary, !!json.hasPrevious);
+      showDiffToast(
+        json.diff,
+        json.diffSummary,
+        !!json.hasPrevious,
+        Number(json.parsedCount) || 0,
+        json.mode === "replace" ? "replace" : "merge"
+      );
       await reload();
     } catch {
       toast({
@@ -475,10 +494,12 @@ export default function PortfolioPageClient() {
               Your portfolio
             </h1>
             <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
-              Upload screenshots from any broker app or statement and we&apos;ll
-              read holdings into a single educational view. You can also edit
-              rows manually anytime. Each upload or edit becomes a new
-              snapshot in your equity curve.
+              Upload screenshots from any broker app or statement — we&apos;ll
+              merge rows into one educational view. Multi-page or multi-broker
+              uploads keep your existing rows; use{" "}
+              <span className="font-medium text-foreground">Replace all</span>{" "}
+              when a single screenshot is your complete list. Each save
+              becomes a snapshot in your equity curve.
             </p>
             {lastUpdated && (
               <p className="text-xs text-muted-foreground mt-2">
@@ -538,9 +559,12 @@ export default function PortfolioPageClient() {
                 Load holdings from screenshots
               </CardTitle>
               <CardDescription>
-                Re-uploading replaces the latest snapshot — sold rows drop off,
-                new buys appear, quantity changes are picked up. We also save a
-                history point so your equity curve grows over time.
+                Multi-page or multi-broker? Use{" "}
+                <span className="font-medium text-foreground">Add / update</span>{" "}
+                — we keep your existing rows and only refresh what&apos;s in this
+                upload. Switch to{" "}
+                <span className="font-medium text-foreground">Replace all</span>{" "}
+                when this screenshot is your full holdings list.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -552,6 +576,26 @@ export default function PortfolioPageClient() {
                 className="hidden"
                 onChange={(e) => uploadScreenshots(e.target.files)}
               />
+
+              <div
+                className="grid grid-cols-2 gap-1 rounded-lg border bg-background p-1 text-xs"
+                role="radiogroup"
+                aria-label="Upload mode"
+              >
+                <ModeOption
+                  active={uploadMode === "merge"}
+                  onClick={() => setUploadMode("merge")}
+                  title="Add / update"
+                  subtitle="Keep existing rows"
+                />
+                <ModeOption
+                  active={uploadMode === "replace"}
+                  onClick={() => setUploadMode("replace")}
+                  title="Replace all"
+                  subtitle="Wipe & start fresh"
+                />
+              </div>
+
               <Button
                 className="w-full gap-2 bg-brand-gradient hover:opacity-90"
                 onClick={() => fileInputRef.current?.click()}
@@ -565,7 +609,9 @@ export default function PortfolioPageClient() {
                 ) : (
                   <>
                     <Upload className="h-4 w-4" />
-                    Upload screenshots
+                    {uploadMode === "replace"
+                      ? "Upload & replace all"
+                      : "Upload screenshots"}
                   </>
                 )}
               </Button>
@@ -1193,4 +1239,39 @@ function AllocationBars({
 function shortLabel(s: string) {
   if (!s) return "—";
   return s.length > 38 ? `${s.slice(0, 35)}…` : s;
+}
+
+function ModeOption({
+  active,
+  onClick,
+  title,
+  subtitle,
+}: {
+  active: boolean;
+  onClick: () => void;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={active}
+      onClick={onClick}
+      className={`text-left rounded-md px-2.5 py-1.5 transition-colors ${
+        active
+          ? "bg-brand-gradient text-primary-foreground shadow-sm"
+          : "hover:bg-muted text-foreground"
+      }`}
+    >
+      <div className="text-[12px] font-medium leading-tight">{title}</div>
+      <div
+        className={`text-[10px] leading-tight ${
+          active ? "text-primary-foreground/80" : "text-muted-foreground"
+        }`}
+      >
+        {subtitle}
+      </div>
+    </button>
+  );
 }

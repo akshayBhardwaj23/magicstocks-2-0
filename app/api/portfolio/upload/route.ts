@@ -3,11 +3,14 @@ import connectMongo from "@/lib/connect-mongo";
 import { computePortfolioInsights } from "@/lib/insights/portfolio";
 import { parseHoldingsFromScreenshots } from "@/lib/portfolio/parseScreenshots";
 import { diffHoldings, summarizeDiff } from "@/lib/portfolio/diff";
+import { mergeHoldings } from "@/lib/portfolio/merge";
 import User from "@/models/User";
 import PortfolioSnapshot from "@/models/PortfolioSnapshot";
 import PortfolioSnapshotHistory from "@/models/PortfolioSnapshotHistory";
 import { NextRequest, NextResponse } from "next/server";
 import type { NormalizedHolding } from "@/lib/brokers";
+
+type UploadMode = "merge" | "replace";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -46,6 +49,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Invalid form data" }, { status: 400 });
   }
 
+  const requestedMode = String(form.get("mode") || "merge").toLowerCase();
+  const mode: UploadMode = requestedMode === "replace" ? "replace" : "merge";
+
   const files = form.getAll("files").filter((x): x is File => x instanceof File);
   if (files.length === 0) {
     return NextResponse.json(
@@ -80,8 +86,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { holdings, notes } = await parseHoldingsFromScreenshots(images);
-    if (!holdings.length) {
+    const { holdings: parsed, notes } = await parseHoldingsFromScreenshots(
+      images
+    );
+    if (!parsed.length) {
       return NextResponse.json(
         {
           message:
@@ -93,31 +101,37 @@ export async function POST(request: NextRequest) {
 
     const previous = await PortfolioSnapshot.findOne({ userId: user._id });
     const prevHoldings = (previous?.holdings as NormalizedHolding[]) || [];
-    const diff = diffHoldings(prevHoldings, holdings);
+
+    const finalHoldings: NormalizedHolding[] =
+      mode === "replace" ? parsed : mergeHoldings(prevHoldings, parsed);
+
+    const diff = diffHoldings(prevHoldings, finalHoldings);
 
     const updated = await PortfolioSnapshot.findOneAndUpdate(
       { userId: user._id },
-      { $set: { holdings, source: "screenshot" } },
+      { $set: { holdings: finalHoldings, source: "screenshot" } },
       { upsert: true, new: true }
     );
 
-    const { invested, current } = totals(holdings);
+    const { invested, current } = totals(finalHoldings);
     await PortfolioSnapshotHistory.create({
       userId: user._id,
       takenAt: new Date(),
       source: "screenshot",
-      holdings,
+      holdings: finalHoldings,
       totalInvested: invested,
       totalCurrent: current,
-      rowCount: holdings.length,
+      rowCount: finalHoldings.length,
     });
 
-    const insights = computePortfolioInsights(holdings);
+    const insights = computePortfolioInsights(finalHoldings);
     return NextResponse.json({
       ok: true,
-      count: holdings.length,
+      mode,
+      count: finalHoldings.length,
+      parsedCount: parsed.length,
       parseNotes: notes,
-      holdings,
+      holdings: finalHoldings,
       insights,
       diff,
       diffSummary: summarizeDiff(diff),
