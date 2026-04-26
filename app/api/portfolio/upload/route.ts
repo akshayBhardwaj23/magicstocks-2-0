@@ -2,9 +2,12 @@ import { auth } from "@/auth";
 import connectMongo from "@/lib/connect-mongo";
 import { computePortfolioInsights } from "@/lib/insights/portfolio";
 import { parseHoldingsFromScreenshots } from "@/lib/portfolio/parseScreenshots";
+import { diffHoldings, summarizeDiff } from "@/lib/portfolio/diff";
 import User from "@/models/User";
 import PortfolioSnapshot from "@/models/PortfolioSnapshot";
+import PortfolioSnapshotHistory from "@/models/PortfolioSnapshotHistory";
 import { NextRequest, NextResponse } from "next/server";
+import type { NormalizedHolding } from "@/lib/brokers";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -12,6 +15,17 @@ export const maxDuration = 60;
 const MAX_FILES = 6;
 const MAX_BYTES = 4 * 1024 * 1024;
 const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
+
+function totals(holdings: NormalizedHolding[]) {
+  let invested = 0;
+  let current = 0;
+  for (const h of holdings) {
+    const qty = h.quantity || 0;
+    invested += (h.avgPrice || 0) * qty;
+    current += (h.lastPrice ?? h.avgPrice ?? 0) * qty;
+  }
+  return { invested, current };
+}
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -77,13 +91,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await PortfolioSnapshot.findOneAndUpdate(
+    const previous = await PortfolioSnapshot.findOne({ userId: user._id });
+    const prevHoldings = (previous?.holdings as NormalizedHolding[]) || [];
+    const diff = diffHoldings(prevHoldings, holdings);
+
+    const updated = await PortfolioSnapshot.findOneAndUpdate(
       { userId: user._id },
-      {
-        $set: { holdings, source: "screenshot" },
-      },
+      { $set: { holdings, source: "screenshot" } },
       { upsert: true, new: true }
     );
+
+    const { invested, current } = totals(holdings);
+    await PortfolioSnapshotHistory.create({
+      userId: user._id,
+      takenAt: new Date(),
+      source: "screenshot",
+      holdings,
+      totalInvested: invested,
+      totalCurrent: current,
+      rowCount: holdings.length,
+    });
 
     const insights = computePortfolioInsights(holdings);
     return NextResponse.json({
@@ -92,6 +119,10 @@ export async function POST(request: NextRequest) {
       parseNotes: notes,
       holdings,
       insights,
+      diff,
+      diffSummary: summarizeDiff(diff),
+      hasPrevious: prevHoldings.length > 0,
+      lastUpdated: updated?.updatedAt || new Date(),
     });
   } catch (e: any) {
     console.error("[portfolio/upload]", e);

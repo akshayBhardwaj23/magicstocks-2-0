@@ -56,17 +56,26 @@ export default function PortfolioAIInsights({
   }));
   const perfSeries = data.performance.series;
   const projection: any = (data as any).projection;
+  const hasRealSeries = perfSeries.length >= 2;
   const equityData = (() => {
     const base: {
       date: string;
       value?: number;
+      invested?: number;
       projLow?: number;
       projMid?: number;
       projHigh?: number;
     }[] = [];
     for (const p of perfSeries)
-      base.push({ date: String(p.date), value: Number(p.value) });
-    if (projection && data.kpis?.current) {
+      base.push({
+        date: String(p.date),
+        value: Number(p.value),
+        invested:
+          (p as { invested?: number }).invested != null
+            ? Number((p as { invested?: number }).invested)
+            : undefined,
+      });
+    if (projection && data.kpis?.current && hasRealSeries) {
       const current = Number(data.kpis.current);
       const { low, mid, high } = projection.cagr || {};
       const cLow = Number(low),
@@ -227,54 +236,90 @@ export default function PortfolioAIInsights({
               </CardTitle>
             </CardHeader>
             <CardContent className="h-56 pt-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={equityData}
-                  margin={{ left: 0, right: 0, top: 10, bottom: 0 }}
-                >
-                  <XAxis dataKey="date" hide />
-                  <YAxis hide domain={["auto", "auto"]} />
-                  <Tooltip
-                    contentStyle={tooltipStyle}
-                    labelFormatter={() => ""}
-                    formatter={(v: number) => [`₹${formatINR(v)}`, "Value"]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                  {projection && (
-                    <>
-                      <Line
-                        type="monotone"
-                        dataKey="projLow"
-                        stroke="hsl(var(--chart-3))"
-                        strokeDasharray="4 4"
-                        strokeWidth={1.5}
-                        dot={false}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="projMid"
-                        stroke="hsl(var(--chart-4))"
-                        strokeWidth={2}
-                        dot={false}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="projHigh"
-                        stroke="hsl(var(--chart-5))"
-                        strokeDasharray="4 4"
-                        strokeWidth={1.5}
-                        dot={false}
-                      />
-                    </>
-                  )}
-                </LineChart>
-              </ResponsiveContainer>
+              {hasRealSeries ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={equityData}
+                    margin={{ left: 0, right: 0, top: 10, bottom: 0 }}
+                  >
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis hide domain={["auto", "auto"]} />
+                    <Tooltip
+                      contentStyle={tooltipStyle}
+                      formatter={(v: number, name: string) => [
+                        `₹${formatINR(v)}`,
+                        name === "value"
+                          ? "Current"
+                          : name === "invested"
+                          ? "Invested"
+                          : name,
+                      ]}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="invested"
+                      name="invested"
+                      stroke="hsl(var(--muted-foreground))"
+                      strokeDasharray="4 4"
+                      strokeWidth={1.5}
+                      dot={false}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      name="value"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2}
+                      dot={{ r: 3, strokeWidth: 0, fill: "hsl(var(--primary))" }}
+                    />
+                    {projection && (
+                      <>
+                        <Line
+                          type="monotone"
+                          dataKey="projLow"
+                          stroke="hsl(var(--chart-3))"
+                          strokeDasharray="4 4"
+                          strokeWidth={1.5}
+                          dot={false}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="projMid"
+                          stroke="hsl(var(--chart-4))"
+                          strokeWidth={2}
+                          dot={false}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="projHigh"
+                          stroke="hsl(var(--chart-5))"
+                          strokeDasharray="4 4"
+                          strokeWidth={1.5}
+                          dot={false}
+                        />
+                      </>
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full grid place-items-center text-center">
+                  <div className="max-w-[260px]">
+                    <LineIcon className="mx-auto h-6 w-6 text-muted-foreground/60" />
+                    <p className="mt-2 text-sm font-medium">
+                      Equity curve appears after a second snapshot
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      We chart current value vs invested across uploads. Upload
+                      a new screenshot or save a manual edit to add a point.
+                    </p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
