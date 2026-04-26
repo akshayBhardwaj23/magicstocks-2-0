@@ -2,6 +2,7 @@
 import PortfolioAIInsights, {
   InsightsData,
 } from "@/components/PortfolioAIInsights";
+import PortfolioChatCard from "@/components/PortfolioChatCard";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ImSpinner } from "react-icons/im";
 import { Button } from "@/components/ui/button";
@@ -1072,6 +1073,8 @@ export default function PortfolioPageClient() {
             </div>
           </CardContent>
         </Card>
+
+        <PortfolioChatCard hasHoldings={holdings.length > 0} />
 
         <PortfolioAIInsights
           data={aiUi ?? fallbackData}

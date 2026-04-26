@@ -42,6 +42,7 @@ So the “achievement so far” is a **credible v1 of an India-focused AI + lear
 - **Zerodha (backend)**: auth/callback, normalized holdings when a `BrokerConnection` exists; UI to create new links is off.
 - **Upstox (in progress)**: env + `lib/brokers/upstox.ts` + callback; **holdings merge still stubbed** in places; same UI pause for new links.
 - **Portfolio AI**: a dedicated route composes Perplexity output with computed metrics to feed `PortfolioAIInsights`—a strong direction for “explain my book” as a first-class feature.
+- **Portfolio-aware chat (context injection)**: portfolio page now has a dedicated chat mode that sends a server-built holdings snapshot into the chat system prompt (`portfolioContext` flag), while home chat remains generic. This keeps “my portfolio” conversations scoped and explicit without changing baseline chat behavior.
 
 ---
 
