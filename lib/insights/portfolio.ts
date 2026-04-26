@@ -22,7 +22,9 @@ export type PortfolioInsights = {
   };
   winners?: HoldingInsight[]; // top by pnlPct
   losers?: HoldingInsight[]; // bottom by pnlPct
-  brokerAllocation?: { [broker: string]: number }; // % by broker
+  brokerAllocation?: { [broker: string]: number }; // % by broker / source
+  /** % of portfolio value by asset class (when assetType is set) */
+  assetAllocation?: { [assetType: string]: number };
 };
 
 export function computePortfolioInsights(
@@ -89,6 +91,12 @@ export function computePortfolioInsights(
     return acc;
   }, {});
 
+  const assetAllocation = enriched.reduce((acc: Record<string, number>, r) => {
+    const k = r.assetType || "other";
+    acc[k] = (acc[k] || 0) + r.weightPct;
+    return acc;
+  }, {});
+
   return {
     totalInvested: round2(totalInvested),
     totalCurrent: round2(totalCurrent),
@@ -99,6 +107,7 @@ export function computePortfolioInsights(
     winners,
     losers,
     brokerAllocation,
+    assetAllocation,
   };
 }
 

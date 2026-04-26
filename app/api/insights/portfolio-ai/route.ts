@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import connectMongo from "@/lib/connect-mongo";
 import User from "@/models/User";
-import BrokerConnection from "@/models/BrokerConnection";
-import { normalizeZerodhaHoldings } from "@/lib/brokers";
+import { loadHoldingsForUser } from "@/lib/portfolio/loadUserHoldings";
 import { perplexity } from "@/lib/customAiModel";
 import { generateText } from "ai";
 import { aiModelName } from "@/constants/constants";
@@ -52,11 +51,12 @@ type UIInsights = {
 };
 
 type Holding = {
-  broker: "zerodha" | "upstox";
+  broker: "zerodha" | "upstox" | "upload";
   symbol: string;
   quantity: number;
   avgPrice: number;
   lastPrice?: number;
+  assetType?: string;
 };
 
 // ---------- Helpers to shape UI data ----------
@@ -190,21 +190,15 @@ export async function POST() {
     if (!user)
       return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-    const conns = await BrokerConnection.find({ userId: user._id });
-
-    // fetch holdings from connected brokers
-    const tasks: Promise<Holding[]>[] = conns.map((conn: any) => {
-      if (conn.broker === "zerodha" && conn.accessToken) {
-        return normalizeZerodhaHoldings(conn.accessToken) as Promise<any>;
-      }
-      return Promise.resolve([]);
-    });
-
-    const settled = await Promise.allSettled(tasks);
-    const allHoldings: Holding[] = [];
-    for (const s of settled) {
-      if (s.status === "fulfilled" && Array.isArray(s.value))
-        allHoldings.push(...(s.value as any));
+    const { holdings: allHoldings } = await loadHoldingsForUser(user._id);
+    if (allHoldings.length === 0) {
+      return NextResponse.json(
+        {
+          message:
+            "No holdings loaded. Upload portfolio screenshots (Portfolio page) or add data when broker linking is available.",
+        },
+        { status: 400 }
+      );
     }
 
     // your existing numeric insights (kept as-is)
@@ -294,6 +288,7 @@ Use this data:
 ${JSON.stringify(
   (allHoldings as any[]).map((h) => ({
     broker: h.broker,
+    assetType: h.assetType,
     symbol: h.symbol,
     quantity: h.quantity,
     avgPrice: h.avgPrice,
@@ -309,6 +304,7 @@ ${JSON.stringify(
     totalUnrealizedPnl: insights.totalUnrealizedPnl,
     concentration: insights.concentration,
     brokerAllocation: insights.brokerAllocation,
+    assetAllocation: insights.assetAllocation,
     topPositions: (insights.topPositions || []).map((p: any) => ({
       broker: p.broker,
       symbol: p.symbol,

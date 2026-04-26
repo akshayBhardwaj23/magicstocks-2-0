@@ -1,13 +1,19 @@
+import type { AssetClass } from "@/lib/portfolio/types";
 import { fetchZerodhaHoldings } from "./zerodha";
 // import { fetchUpstoxHoldings } from "./upstox";
 
+export type { AssetClass } from "@/lib/portfolio/types";
+
+/** One row for portfolio math (broker API or upload pipeline) */
 export type NormalizedHolding = {
-  broker: "zerodha" | "upstox";
+  broker: "zerodha" | "upstox" | "upload";
   symbol: string;
   quantity: number;
   avgPrice: number;
   lastPrice?: number;
   pnl?: number;
+  assetType?: AssetClass;
+  currency?: string;
 };
 
 export async function normalizeZerodhaHoldings(accessToken: string) {
@@ -18,6 +24,7 @@ export async function normalizeZerodhaHoldings(accessToken: string) {
     quantity: Number(r.quantity || r.qty || 0),
     avgPrice: Number(r.average_price || r.avg_price || 0),
     lastPrice: Number(r.last_price || r.ltp || 0),
+    assetType: "stock",
   }));
   return mapped;
 }
@@ -28,9 +35,9 @@ export async function normalizeZerodhaHoldings(accessToken: string) {
 //     broker: "upstox",
 //     symbol: r.symbol || r.trading_symbol || r.isin,
 //     quantity: Number(r.quantity || r.qty || 0),
-//     // Upstox v2 often returns prices in paise; normalize to rupees
 //     avgPrice: Number(r.average_price || r.avg_price || 0) / 100,
 //     lastPrice: Number(r.last_price || r.ltp || 0) / 100,
+//     assetType: "stock",
 //   }));
 //   return mapped;
 // }

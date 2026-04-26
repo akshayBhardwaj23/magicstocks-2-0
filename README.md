@@ -35,9 +35,23 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Portfolio screenshots (vision parsing)
+
+The Portfolio page can **extract holdings from uploaded images** (broker apps, statements, etc.) using the OpenAI API.
+
+Add to `.env.local`:
+
+```bash
+OPENAI_API_KEY=sk-...
+# Optional; default is gpt-4o-mini
+# OPENAI_VISION_MODEL=gpt-4o-mini
+```
+
+**Notes:** Output is only as good as the screenshot and the model; users should verify every row. The app classifies lines into types such as `stock`, `etf`, `mutual_fund`, `foreign_stock`, `gold_bond`, `debt`, `other`. Set `PPLX_API` (or your env) for chat separately—this is unrelated to screenshot parsing.
+
 ## Broker Integrations (India)
 
-**Note:** OAuth “link broker” buttons are currently **turned off** in the app UI, but server routes and env-based integration may still be used for development or when you re-enable the flow.
+**Note:** OAuth “link broker” buttons are currently **turned off** in the app UI, but server routes and env-based integration may still be used for development or when you re-enable the flow. If a user has both an uploaded snapshot and a broker connection, **the latest screenshot snapshot wins** (non-empty) for portfolio math.
 
 To enable Zerodha and Upstox **API** integration (e.g. for dev or a future UI), add these to your `.env.local`:
 

@@ -48,7 +48,7 @@ export default function PortfolioPageClient() {
         insights?.totalCurrent ??
         holdings.reduce(
           (s, h) => s + (h.lastPrice ?? h.avgPrice ?? 0) * (h.quantity || 0),
-          0
+          0,
         ),
       pnl:
         insights?.totalUnrealizedPnl ??
@@ -57,7 +57,7 @@ export default function PortfolioPageClient() {
             s +
             ((h.lastPrice ?? h.avgPrice ?? 0) - (h.avgPrice || 0)) *
               (h.quantity || 0),
-          0
+          0,
         ),
     },
     performance: {
@@ -66,13 +66,13 @@ export default function PortfolioPageClient() {
           insights?.totalInvested ??
           holdings.reduce(
             (s, h) => s + (h.avgPrice || 0) * (h.quantity || 0),
-            0
+            0,
           );
         const current =
           insights?.totalCurrent ??
           holdings.reduce(
             (s, h) => s + (h.lastPrice ?? h.avgPrice ?? 0) * (h.quantity || 0),
-            0
+            0,
           );
         return [
           { date: "Start", value: Math.max(0, invested) },
@@ -168,8 +168,8 @@ export default function PortfolioPageClient() {
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
               View holdings and explore educational context with AI when
-              available (not investment advice). In-app broker linking is
-              paused for now.
+              available (not investment advice). In-app broker linking is paused
+              for now.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -244,9 +244,8 @@ export default function PortfolioPageClient() {
                 ))}
                 {connections.length === 0 && (
                   <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">
-                    No linked accounts. Broker linking is temporarily
-                    disabled; any existing link will still appear here if
-                    present.
+                    No linked accounts. Broker linking is temporarily disabled;
+                    any existing link will still appear here if present.
                   </div>
                 )}
               </div>
@@ -293,7 +292,7 @@ export default function PortfolioPageClient() {
                                   style={{
                                     width: `${Math.min(
                                       100,
-                                      Math.max(0, Number(pct))
+                                      Math.max(0, Number(pct)),
                                     )}%`,
                                   }}
                                 />
@@ -302,7 +301,7 @@ export default function PortfolioPageClient() {
                                 {Number(pct).toFixed(1)}%
                               </span>
                             </div>
-                          )
+                          ),
                         )}
                       </div>
                     </div>
@@ -386,8 +385,8 @@ export default function PortfolioPageClient() {
                         className="p-6 text-center text-muted-foreground"
                         colSpan={5}
                       >
-                        No holdings loaded. Add data when broker linking
-                        returns or another input path is available.
+                        No holdings loaded. Add data when broker linking returns
+                        or another input path is available.
                       </td>
                     </tr>
                   )}
