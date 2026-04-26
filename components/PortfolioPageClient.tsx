@@ -59,7 +59,59 @@ type Holding = {
   unrealizedPnl?: number;
   assetType?: AssetType;
   currency?: string;
+  /** INR-equivalent of avgPrice, frozen at write time. */
+  avgPriceInr?: number;
+  /** INR-equivalent of lastPrice, frozen at write time. */
+  lastPriceInr?: number;
+  /** Currency → INR rate used at write time. INR rows = 1. */
+  fxRate?: number;
 };
+
+const CURRENCY_OPTIONS = [
+  "INR",
+  "USD",
+  "EUR",
+  "GBP",
+  "AED",
+  "SGD",
+  "AUD",
+  "CAD",
+  "JPY",
+  "CHF",
+  "HKD",
+] as const;
+
+const CURRENCY_SYMBOL: Record<string, string> = {
+  INR: "₹",
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  JPY: "¥",
+  AED: "AED ",
+  SGD: "S$",
+  AUD: "A$",
+  CAD: "C$",
+  CHF: "CHF ",
+  HKD: "HK$",
+};
+
+function symbolFor(currency?: string): string {
+  const ccy = (currency || "INR").toUpperCase();
+  return CURRENCY_SYMBOL[ccy] || `${ccy} `;
+}
+
+function inrAvg(h: Holding): number {
+  if (h.avgPriceInr != null && Number.isFinite(h.avgPriceInr))
+    return Number(h.avgPriceInr);
+  return Number(h.avgPrice) || 0;
+}
+
+function inrLast(h: Holding): number {
+  if (h.lastPriceInr != null && Number.isFinite(h.lastPriceInr))
+    return Number(h.lastPriceInr);
+  if (h.lastPrice != null) return Number(h.lastPrice);
+  return inrAvg(h);
+}
 
 type Insights = {
   totalInvested?: number;
@@ -169,17 +221,17 @@ export default function PortfolioPageClient() {
   const [snapshotSource, setSnapshotSource] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [series, setSeries] = useState<SeriesPoint[]>([]);
+  const [fxRates, setFxRates] = useState<Record<string, number>>({});
   const [aiUi, setAiUi] = useState<InsightsData | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const fallbackData: InsightsData = useMemo(() => {
     const investedFallback = holdings.reduce(
-      (s, h) => s + (h.avgPrice || 0) * (h.quantity || 0),
+      (s, h) => s + inrAvg(h) * (h.quantity || 0),
       0
     );
     const currentFallback = holdings.reduce(
-      (s, h) =>
-        s + (h.lastPrice ?? h.avgPrice ?? 0) * (h.quantity || 0),
+      (s, h) => s + inrLast(h) * (h.quantity || 0),
       0
     );
 
@@ -207,7 +259,7 @@ export default function PortfolioPageClient() {
       allocations: (() => {
         const rows = holdings.map((h) => ({
           label: shortLabel(h.symbol),
-          value: (h.lastPrice ?? h.avgPrice ?? 0) * (h.quantity || 0),
+          value: inrLast(h) * (h.quantity || 0),
         }));
         const total = rows.reduce((s, r) => s + r.value, 0);
         return rows
@@ -264,6 +316,9 @@ export default function PortfolioPageClient() {
         setLastUpdated(data.lastUpdated || null);
         setSnapshotSource(data.snapshotSource || null);
         setSeries(Array.isArray(data.series) ? data.series : []);
+        setFxRates(
+          data.fxRates && typeof data.fxRates === "object" ? data.fxRates : {}
+        );
       } else {
         setHoldings([]);
         setInsights(null);
@@ -271,6 +326,7 @@ export default function PortfolioPageClient() {
         setLastUpdated(null);
         setSnapshotSource(null);
         setSeries([]);
+        setFxRates({});
       }
     } catch (error) {
       console.error("[portfolio] reload failed", error);
@@ -521,6 +577,18 @@ export default function PortfolioPageClient() {
                     snapshot{series.length === 1 ? "" : "s"} on file
                   </>
                 )}
+              </p>
+            )}
+            {Object.keys(fxRates).length > 0 && (
+              <p className="text-[11px] text-muted-foreground mt-1.5">
+                <span className="font-medium text-foreground">FX:</span>{" "}
+                {Object.entries(fxRates)
+                  .map(
+                    ([ccy, rate]) =>
+                      `1 ${ccy} ≈ ₹${Number(rate).toFixed(2)}`
+                  )
+                  .join(" · ")}{" "}
+                · totals shown in INR
               </p>
             )}
           </div>
@@ -885,8 +953,8 @@ export default function PortfolioPageClient() {
                           {shortLabel(h.symbol)}
                         </span>
                         {h.currency && h.currency !== "INR" && (
-                          <span className="ml-1 text-xs text-muted-foreground">
-                            ({h.currency})
+                          <span className="ml-1 inline-flex items-center rounded border border-primary/30 bg-primary/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary">
+                            {h.currency}
                           </span>
                         )}
                       </td>
@@ -894,10 +962,26 @@ export default function PortfolioPageClient() {
                         {h.quantity}
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums">
-                        ₹{prettyINR(h.avgPrice)}
+                        <div>
+                          {symbolFor(h.currency)}
+                          {prettyINR(h.avgPrice)}
+                        </div>
+                        {h.currency && h.currency !== "INR" && (
+                          <div className="text-[10px] text-muted-foreground">
+                            ≈ ₹{prettyINR(inrAvg(h))}
+                          </div>
+                        )}
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums">
-                        ₹{prettyINR(h.lastPrice)}
+                        <div>
+                          {symbolFor(h.currency)}
+                          {prettyINR(h.lastPrice)}
+                        </div>
+                        {h.currency && h.currency !== "INR" && (
+                          <div className="text-[10px] text-muted-foreground">
+                            ≈ ₹{prettyINR(inrLast(h))}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -1047,7 +1131,7 @@ function EditHoldingsSheet({
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 <LabeledInput
                   label="Qty"
                   type="number"
@@ -1059,7 +1143,7 @@ function EditHoldingsSheet({
                   }
                 />
                 <LabeledInput
-                  label="Avg price"
+                  label={`Avg price (${row.currency || "INR"})`}
                   type="number"
                   min={0}
                   step="any"
@@ -1069,7 +1153,7 @@ function EditHoldingsSheet({
                   }
                 />
                 <LabeledInput
-                  label="Last price"
+                  label={`Last price (${row.currency || "INR"})`}
                   type="number"
                   min={0}
                   step="any"
@@ -1094,6 +1178,24 @@ function EditHoldingsSheet({
                     {ASSET_OPTIONS.map((o) => (
                       <option key={o.value} value={o.value}>
                         {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Currency
+                  </label>
+                  <select
+                    value={row.currency || "INR"}
+                    onChange={(e) =>
+                      onUpdate(row.id, { currency: e.target.value })
+                    }
+                    className="h-9 rounded-md border bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  >
+                    {CURRENCY_OPTIONS.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
                       </option>
                     ))}
                   </select>

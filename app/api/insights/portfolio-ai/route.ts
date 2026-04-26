@@ -57,6 +57,10 @@ type Holding = {
   avgPrice: number;
   lastPrice?: number;
   assetType?: string;
+  currency?: string;
+  avgPriceInr?: number;
+  lastPriceInr?: number;
+  fxRate?: number;
 };
 
 // ---------- Helpers to shape UI data ----------
@@ -64,12 +68,25 @@ function toINR(n: number) {
   return Number.isFinite(n) ? n : 0;
 }
 
+function avgInr(h: Holding): number {
+  if (h.avgPriceInr != null && Number.isFinite(h.avgPriceInr))
+    return Number(h.avgPriceInr);
+  return toINR(h.avgPrice);
+}
+
+function lastInr(h: Holding): number {
+  if (h.lastPriceInr != null && Number.isFinite(h.lastPriceInr))
+    return Number(h.lastPriceInr);
+  if (h.lastPrice != null) return toINR(h.lastPrice);
+  return avgInr(h);
+}
+
 function buildUIData(holdings: Holding[], insights: any): UIInsights {
-  // current value per holding
   const rows = holdings.map((h) => {
-    const last = toINR(h.lastPrice ?? 0);
+    const last = lastInr(h);
+    const avg = avgInr(h);
     const curVal = last * h.quantity;
-    const invVal = toINR(h.avgPrice) * h.quantity;
+    const invVal = avg * h.quantity;
     const pnl = curVal - invVal;
     const pnlPct = invVal > 0 ? (pnl / invVal) * 100 : 0;
     return { ...h, curVal, invVal, pnl, pnlPct };
@@ -291,8 +308,12 @@ ${JSON.stringify(
     assetType: h.assetType,
     symbol: h.symbol,
     quantity: h.quantity,
-    avgPrice: h.avgPrice,
-    lastPrice: h.lastPrice,
+    nativeCurrency: h.currency || "INR",
+    avgPriceNative: h.avgPrice,
+    lastPriceNative: h.lastPrice,
+    avgPriceInr: h.avgPriceInr ?? h.avgPrice,
+    lastPriceInr: h.lastPriceInr ?? h.lastPrice ?? h.avgPrice,
+    fxRateToInr: h.fxRate ?? 1,
   }))
 ).slice(0, 4000)}
 

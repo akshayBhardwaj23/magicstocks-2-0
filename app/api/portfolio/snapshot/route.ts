@@ -5,6 +5,7 @@ import PortfolioSnapshot from "@/models/PortfolioSnapshot";
 import PortfolioSnapshotHistory from "@/models/PortfolioSnapshotHistory";
 import { computePortfolioInsights } from "@/lib/insights/portfolio";
 import { diffHoldings, summarizeDiff } from "@/lib/portfolio/diff";
+import { applyFxToHoldings } from "@/lib/portfolio/applyFx";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import type { NormalizedHolding } from "@/lib/brokers";
@@ -39,8 +40,18 @@ function totals(holdings: NormalizedHolding[]) {
   let current = 0;
   for (const h of holdings) {
     const qty = h.quantity || 0;
-    invested += (h.avgPrice || 0) * qty;
-    current += (h.lastPrice ?? h.avgPrice ?? 0) * qty;
+    const avg =
+      h.avgPriceInr != null && Number.isFinite(h.avgPriceInr)
+        ? Number(h.avgPriceInr)
+        : Number(h.avgPrice) || 0;
+    const last =
+      h.lastPriceInr != null && Number.isFinite(h.lastPriceInr)
+        ? Number(h.lastPriceInr)
+        : h.lastPrice != null
+          ? Number(h.lastPrice)
+          : avg;
+    invested += avg * qty;
+    current += last * qty;
   }
   return { invested, current };
 }
@@ -73,7 +84,7 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
-  const cleaned: NormalizedHolding[] = parsed.data.holdings
+  const cleanedRaw: NormalizedHolding[] = parsed.data.holdings
     .filter((h) => h.symbol.trim().length > 0 && h.quantity > 0)
     .map((h) => ({
       broker: "upload",
@@ -82,8 +93,11 @@ export async function PATCH(request: NextRequest) {
       avgPrice: h.avgPrice,
       lastPrice: h.lastPrice ?? h.avgPrice,
       assetType: h.assetType || "stock",
-      currency: h.currency || "INR",
+      currency: (h.currency || "INR").toUpperCase(),
     }));
+
+  // Stamp INR-equivalent prices so a USD edit does not get summed as ₹.
+  const cleaned = await applyFxToHoldings(cleanedRaw);
 
   const previous = await PortfolioSnapshot.findOne({ userId: user._id });
   const prevHoldings = (previous?.holdings as NormalizedHolding[]) || [];

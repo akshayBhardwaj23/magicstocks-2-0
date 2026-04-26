@@ -1,5 +1,6 @@
 import type { NormalizedHolding } from "@/lib/brokers";
 import { normalizeZerodhaHoldings } from "@/lib/brokers";
+import { applyFxToHoldings, applyFxFallback } from "@/lib/portfolio/applyFx";
 import BrokerConnection from "@/models/BrokerConnection";
 import PortfolioSnapshot from "@/models/PortfolioSnapshot";
 import type { Types } from "mongoose";
@@ -27,8 +28,20 @@ export async function loadHoldingsForUser(
   );
 
   if (snapRows && snapRows.length > 0) {
+    // Defensive: legacy snapshots may not have *Inr stamped. If any non-INR
+    // currency is missing the conversion, fetch fresh rates; otherwise use the
+    // sync fallback to populate trivially.
+    const needsRemote = snapRows.some(
+      (r) =>
+        (r.currency || "INR").toUpperCase() !== "INR" &&
+        (r.avgPriceInr == null || r.fxRate == null)
+    );
+    const holdings = needsRemote
+      ? await applyFxToHoldings(snapRows)
+      : applyFxFallback(snapRows);
+
     return {
-      holdings: snapRows,
+      holdings,
       dataSource: "screenshot",
       failures: [],
       parseNotes: undefined,

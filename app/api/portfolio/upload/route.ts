@@ -4,6 +4,7 @@ import { computePortfolioInsights } from "@/lib/insights/portfolio";
 import { parseHoldingsFromScreenshots } from "@/lib/portfolio/parseScreenshots";
 import { diffHoldings, summarizeDiff } from "@/lib/portfolio/diff";
 import { mergeHoldings } from "@/lib/portfolio/merge";
+import { applyFxToHoldings } from "@/lib/portfolio/applyFx";
 import User from "@/models/User";
 import PortfolioSnapshot from "@/models/PortfolioSnapshot";
 import PortfolioSnapshotHistory from "@/models/PortfolioSnapshotHistory";
@@ -24,8 +25,18 @@ function totals(holdings: NormalizedHolding[]) {
   let current = 0;
   for (const h of holdings) {
     const qty = h.quantity || 0;
-    invested += (h.avgPrice || 0) * qty;
-    current += (h.lastPrice ?? h.avgPrice ?? 0) * qty;
+    const avg =
+      h.avgPriceInr != null && Number.isFinite(h.avgPriceInr)
+        ? Number(h.avgPriceInr)
+        : Number(h.avgPrice) || 0;
+    const last =
+      h.lastPriceInr != null && Number.isFinite(h.lastPriceInr)
+        ? Number(h.lastPriceInr)
+        : h.lastPrice != null
+          ? Number(h.lastPrice)
+          : avg;
+    invested += avg * qty;
+    current += last * qty;
   }
   return { invested, current };
 }
@@ -86,10 +97,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { holdings: parsed, notes } = await parseHoldingsFromScreenshots(
+    const { holdings: parsedRaw, notes } = await parseHoldingsFromScreenshots(
       images
     );
-    if (!parsed.length) {
+    if (!parsedRaw.length) {
       return NextResponse.json(
         {
           message:
@@ -98,6 +109,10 @@ export async function POST(request: NextRequest) {
         { status: 422 }
       );
     }
+
+    // Stamp INR-equivalent prices on the freshly parsed rows so a USD position
+    // is not silently summed as ₹.
+    const parsed = await applyFxToHoldings(parsedRaw);
 
     const previous = await PortfolioSnapshot.findOne({ userId: user._id });
     const prevHoldings = (previous?.holdings as NormalizedHolding[]) || [];

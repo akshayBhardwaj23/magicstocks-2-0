@@ -33,7 +33,11 @@ const SYSTEM = `You extract investment holdings from screenshots (broker apps, C
 Classify each line into assetType: stock, etf, mutual_fund, foreign_stock, gold_bond, debt, or other.
 Use quantity in natural units: shares for equities, units for mutual funds, grams for gold if shown, else units.
 If only current value is visible for a line, set currentValue and quantity=1 and averagePrice=currentValue.
-Prices and values: use the same currency as on screen (usually INR); if US stock, set currency USD and assetType foreign_stock.
+Currency rules — read carefully and never default blindly to INR:
+  - Inspect the price/value cells for symbols ($, €, £, ¥, AED, SGD, A$, C$, HK$) or labels (USD, EUR, GBP, etc.). Set "currency" to the matching ISO 4217 code (USD, EUR, GBP, AED, SGD, AUD, CAD, JPY, CHF, HKD, …).
+  - If the screenshot is from a US broker (Robinhood, Schwab, Fidelity, IBKR, Vested, Stockal, INDmoney US holdings) or shows tickers like AAPL, MSFT, TSLA, NVDA, GOOGL, AMZN with $ prices, set currency "USD" and assetType "foreign_stock".
+  - Use the same currency for averagePrice, currentPrice and currentValue on a single row — do NOT mix.
+  - Only fall back to "INR" when nothing on the row hints at another currency.
 Return strict JSON only, no markdown.`;
 
 /**
@@ -138,6 +142,8 @@ function toNormalized(row: z.infer<typeof rowSchema>): NormalizedHolding {
     lastPrice = row.currentValue;
   }
 
+  const currency = normalizeCurrency(row.currency, row.assetType);
+
   return {
     broker: "upload",
     symbol: label,
@@ -145,6 +151,50 @@ function toNormalized(row: z.infer<typeof rowSchema>): NormalizedHolding {
     avgPrice,
     lastPrice: lastPrice ?? avgPrice,
     assetType: row.assetType as AssetClass,
-    currency: row.currency || "INR",
+    currency,
   };
+}
+
+/**
+ * Coerce model-reported currency strings (e.g. "$", "us dollar", "INR.") into
+ * a clean ISO 4217 code. Foreign stocks default to USD when nothing usable is
+ * provided so we don't accidentally treat a US position as ₹.
+ */
+function normalizeCurrency(
+  raw: string | undefined,
+  assetType: string | undefined
+): string {
+  const cleaned = (raw || "").trim().toUpperCase().replace(/[^A-Z$€£¥]/g, "");
+  const map: Record<string, string> = {
+    $: "USD",
+    USD: "USD",
+    "US$": "USD",
+    DOLLAR: "USD",
+    DOLLARS: "USD",
+    USDOLLAR: "USD",
+    "€": "EUR",
+    EUR: "EUR",
+    EURO: "EUR",
+    "£": "GBP",
+    GBP: "GBP",
+    POUND: "GBP",
+    "¥": "JPY",
+    JPY: "JPY",
+    YEN: "JPY",
+    INR: "INR",
+    "₹": "INR",
+    RS: "INR",
+    RUPEE: "INR",
+    RUPEES: "INR",
+    AED: "AED",
+    SGD: "SGD",
+    AUD: "AUD",
+    CAD: "CAD",
+    CHF: "CHF",
+    HKD: "HKD",
+  };
+  if (cleaned && map[cleaned]) return map[cleaned];
+  if (cleaned.length === 3) return cleaned; // assume valid ISO code
+  if (assetType === "foreign_stock") return "USD";
+  return "INR";
 }

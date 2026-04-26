@@ -50,6 +50,16 @@ export async function GET() {
     );
   }
 
+  // Summarise FX rates currently in play so the UI can show a transparency hint
+  // like "1 USD ≈ ₹83.10".
+  const fx: Record<string, number> = {};
+  for (const h of holdings) {
+    const ccy = (h.currency || "INR").toUpperCase();
+    if (ccy !== "INR" && h.fxRate && Number.isFinite(h.fxRate)) {
+      fx[ccy] = Number(h.fxRate);
+    }
+  }
+
   return NextResponse.json({
     holdings,
     insights,
@@ -59,5 +69,7 @@ export async function GET() {
     snapshotSource: snapshot?.source || null,
     series,
     snapshotCount: series.length,
+    fxRates: fx,
+    baseCurrency: "INR",
   });
 }
