@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -19,14 +20,15 @@ import {
   Shield,
   Bot,
   Users,
-  Phone,
   Mail,
   FileText,
   Star,
+  Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 
 const HelpPage = () => {
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  const [openFAQ, setOpenFAQ] = useState<number | null>(0);
 
   const toggleFAQ = (index: number) => {
     setOpenFAQ(openFAQ === index ? null : index);
@@ -36,289 +38,241 @@ const HelpPage = () => {
     {
       question: "What is MagicStocks.ai and how does it work?",
       answer:
-        "MagicStocks.ai is an information and education platform for Indian markets. It uses AI to help you explore public data, company context, and market topics in plain language. It does not provide SEBI-regulated investment advice, research reports, or personalized buy/sell recommendations. For investment decisions, speak to a SEBI-registered investment adviser or other qualified professional.",
+        "MagicStocks.ai is an information and education platform for Indian markets. AI helps you explore public data, company context, and market topics in plain language. It is not a SEBI-registered investment adviser or research analyst, and does not give buy / sell / hold calls. For investment decisions, please consult a registered professional.",
     },
     {
       question: "Does the AI predict stock prices or tell me what to buy?",
       answer:
-        "No. We do not position the product as a prediction or tip service. Outputs are for learning and research support. Markets are uncertain; any numbers or scenarios are illustrative unless clearly sourced. Always do your own diligence and use licensed professionals when you need advice.",
+        "No. We don’t position the product as a tip or prediction service. Outputs are for learning and research support. Markets are uncertain; any numbers or scenarios are illustrative unless clearly sourced.",
     },
     {
-      question: "How do I get started with MagicStocks.ai?",
+      question: "How do I get started?",
       answer:
-        "Sign up for an account, purchase credits, and start with questions about companies, sectors, or how markets work. Optional in-app broker account linking is temporarily unavailable; the portfolio area will support other ways to add context when we ship them—not a substitute for professional advice.",
+        "Sign up, top up some credits, and start asking questions about companies, sectors, or how markets work. To explore your own portfolio, upload one or more screenshots of your holdings — AI will read them into a single educational view.",
     },
     {
       question: "What are credits and how do they work?",
       answer:
-        "Credits are used for AI interactions on our platform. Each question or analysis request consumes one credit. You can purchase credit packs through our billing system. Credits never expire and can be used anytime.",
+        "Credits are used for AI interactions. Each question or analysis request consumes one credit. You can purchase credit packs from the billing page. Credits don’t expire automatically.",
     },
     {
-      question: "Can I connect my existing broker account?",
+      question: "Can I connect my Zerodha or Upstox account?",
       answer:
-        "Not in the app right now—broker account linking (e.g. via supported Indian brokers) is temporarily turned off. When it returns, it would let you view your holdings for educational context only, not personalized investment advice. We will describe security and data handling in product updates at that time.",
+        "In-app broker linking is paused for now. Instead, you can upload screenshots from your broker app or statement and we’ll extract holdings into a structured, educational view.",
     },
     {
       question: "Is my data secure?",
       answer:
-        "We use strong encryption in transit and protect account data. If broker linking is offered again in the future, credentials or tokens would be stored securely and not sold to third parties. We work to follow applicable data protection requirements.",
+        "We use HTTPS throughout, store only what we need, and never sell your data. Uploaded screenshots are processed to extract holdings and stored against your account so you can refresh your view; you can delete them anytime from the portfolio page.",
     },
     {
       question: "What can I explore with the AI?",
       answer:
-        "You can ask for educational explanations: how indicators are read, what recent news and filings discuss, sector themes, and high-level risk ideas people study in textbooks—not trade instructions. For portfolio-linked views, we show data and learning-oriented notes, not recommendations to buy, sell, or rebalance.",
+        "Ask for educational explanations: how indicators are read, what recent news and filings discuss, sector themes, and risk concepts. For portfolio-linked views, we show data and learning notes — not recommendations to buy, sell, or rebalance.",
     },
     {
       question: "How do I cancel my subscription?",
       answer:
-        "You can manage your subscription and credits through your account dashboard. Go to 'Manage Credits' or 'Billing History' to view your current plan and make changes. You can pause or cancel anytime without losing your remaining credits.",
-    },
-    {
-      question: "Do you offer customer support?",
-      answer:
-        "Yes! We provide customer support through email and our help center. For urgent matters, you can reach us through our contact page. We typically respond within 24 hours during business days.",
+        "Manage credits and payments from the Account → Billing area. You can pause or cancel anytime; remaining credits stay in your account.",
     },
     {
       question: "Can I use MagicStocks.ai on mobile devices?",
       answer:
-        "Yes! Our platform is fully responsive and works on mobile, tablets, and desktops. You can use AI chat and portfolio areas from any device. Optional broker linking is currently unavailable; features may change as we release updates.",
+        "Yes — the platform is fully responsive across mobile, tablet, and desktop.",
     },
   ];
 
   const quickLinks = [
     {
-      title: "Getting Started",
-      description: "Learn how to set up your account",
+      title: "Getting started",
+      description: "Set up your account and your first prompt",
       icon: Star,
-      href: "#getting-started",
     },
     {
-      title: "Account & Billing",
-      description: "Manage your credits and subscription",
+      title: "Account & billing",
+      description: "Credits, plans, and invoices",
       icon: CreditCard,
-      href: "#billing",
     },
     {
-      title: "Portfolio",
-      description: "Broker linking paused; more options coming",
+      title: "Portfolio uploads",
+      description: "Use screenshots, not broker linking",
       icon: Shield,
-      href: "#brokers",
     },
     {
       title: "AI & education",
-      description: "How we use AI (non-advisory)",
+      description: "What the AI is — and isn't — for",
       icon: Bot,
-      href: "#ai-analysis",
-    },
-  ];
-
-  const contactMethods = [
-    {
-      icon: Mail,
-      title: "Email Support",
-      description: "support@magicstocks.ai",
-      action: "Send Email",
-    },
-    {
-      icon: MessageCircle,
-      title: "Live Chat",
-      description: "Available 9 AM - 6 PM IST",
-      action: "Start Chat",
-    },
-    {
-      icon: Phone,
-      title: "Phone Support",
-      description: "+91-XXX-XXX-XXXX",
-      action: "Call Now",
     },
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-          <HelpCircle className="h-10 w-10 text-primary" />
-          Help & FAQ
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Find answers to common questions about MagicStocks.ai, get support,
-          and learn how to make the most of our AI-powered stock analysis
-          platform.
-        </p>
-      </div>
+    <main className="relative">
+      <div className="pointer-events-none absolute inset-0 -z-10 hero-spotlight" />
 
-      {/* Quick Links */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        {quickLinks.map((link, index) => (
-          <Card
-            key={index}
-            className="hover:shadow-md transition-shadow cursor-pointer"
+      <div className="container mx-auto px-4 py-12 max-w-6xl">
+        <div className="text-center max-w-3xl mx-auto">
+          <Badge
+            variant="secondary"
+            className="border-primary/20 bg-primary/10 text-primary"
           >
-            <CardHeader className="text-center">
-              <link.icon className="h-8 w-8 mx-auto text-primary mb-2" />
-              <CardTitle className="text-lg">{link.title}</CardTitle>
-              <CardDescription>{link.description}</CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
+            <Sparkles className="mr-1 h-3.5 w-3.5" />
+            Help & FAQ
+          </Badge>
+          <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight flex items-center justify-center gap-3">
+            <HelpCircle className="h-9 w-9 text-primary" />
+            How can we help?
+          </h1>
+          <p className="mt-4 text-muted-foreground">
+            Common questions about MagicStocks.ai — what it is, how to use it,
+            and how we think about education vs. investment advice.
+          </p>
+        </div>
 
-      {/* FAQ Section */}
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
-          Frequently Asked Questions
-        </h2>
-        <div className="space-y-4">
-          {faqData.map((faq, index) => (
-            <Card key={index} className="border">
-              <CardHeader
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => toggleFAQ(index)}
-              >
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg pr-8">{faq.question}</CardTitle>
-                  {openFAQ === index ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                  )}
-                </div>
+        <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickLinks.map((link) => (
+            <Card key={link.title} interactive className="surface-soft">
+              <CardHeader className="text-center">
+                <link.icon className="h-7 w-7 mx-auto text-primary" />
+                <CardTitle className="text-base mt-2">{link.title}</CardTitle>
+                <CardDescription>{link.description}</CardDescription>
               </CardHeader>
-              {openFAQ === index && (
-                <CardContent className="pt-0">
-                  <Separator className="mb-4" />
-                  <p className="text-muted-foreground leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </CardContent>
-              )}
             </Card>
           ))}
         </div>
-      </div>
 
-      {/* Contact Support */}
-      <Card className="mb-8">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl flex items-center justify-center gap-2">
-            <MessageCircle className="h-6 w-6" />
-            Still Need Help?
-          </CardTitle>
-          <CardDescription className="text-lg">
-            Our support team is here to help you succeed with MagicStocks.ai
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {contactMethods.map((method, index) => (
-              <div
-                key={index}
-                className="text-center p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <method.icon className="h-8 w-8 mx-auto text-primary mb-3" />
-                <h3 className="font-semibold mb-2">{method.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  {method.description}
-                </p>
-                <Button variant="outline" size="sm">
-                  {method.action}
-                </Button>
-              </div>
+        <div className="mt-12">
+          <h2 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-center">
+            Frequently asked questions
+          </h2>
+          <div className="mt-6 space-y-3 max-w-3xl mx-auto">
+            {faqData.map((faq, index) => (
+              <Card key={index} className="overflow-hidden">
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="w-full text-left"
+                >
+                  <CardHeader className="flex-row items-center justify-between space-y-0 hover:bg-muted/50 transition-colors">
+                    <CardTitle className="text-base pr-8">
+                      {faq.question}
+                    </CardTitle>
+                    {openFAQ === index ? (
+                      <ChevronUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    )}
+                  </CardHeader>
+                </button>
+                {openFAQ === index && (
+                  <CardContent className="pt-0">
+                    <Separator className="mb-4" />
+                    <p className="text-muted-foreground leading-relaxed text-sm">
+                      {faq.answer}
+                    </p>
+                  </CardContent>
+                )}
+              </Card>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Additional Resources */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Documentation
+        <Card className="mt-12 surface-soft">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl flex items-center justify-center gap-2">
+              <MessageCircle className="h-5 w-5 text-primary" />
+              Still need help?
             </CardTitle>
+            <CardDescription>
+              Drop us a line — we usually respond within a couple of business
+              days.
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-sm">
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  API Documentation
-                </a>
-              </li>
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  Integration Guide
-                </a>
-              </li>
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  Best Practices
-                </a>
-              </li>
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  Security Guidelines
-                </a>
-              </li>
-            </ul>
+          <CardContent className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild className="bg-brand-gradient hover:opacity-90">
+              <Link href="mailto:support@magicstocks.ai" className="gap-2">
+                <Mail className="h-4 w-4" />
+                support@magicstocks.ai
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/contact-us">Contact page</Link>
+            </Button>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Community
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-sm">
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  User Forum
-                </a>
-              </li>
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  Feature Requests
-                </a>
-              </li>
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  Success Stories
-                </a>
-              </li>
-              <li>
-                •{" "}
-                <a href="#" className="text-primary hover:underline">
-                  Beta Testing
-                </a>
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <FileText className="h-4 w-4 text-primary" />
+                Resources
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link
+                    href="/about-us"
+                    className="text-primary hover:underline"
+                  >
+                    About MagicStocks
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms-conditions"
+                    className="text-primary hover:underline"
+                  >
+                    Terms & conditions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/privacy-policy"
+                    className="text-primary hover:underline"
+                  >
+                    Privacy policy
+                  </Link>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
 
-      {/* Footer Note */}
-      <div className="text-center mt-12 p-6 bg-muted/50 rounded-lg">
-        <p className="text-sm text-muted-foreground">
-          <strong>Disclaimer:</strong> MagicStocks.ai provides information and
-          education only. We are not SEBI-registered as an investment adviser or
-          research analyst. Nothing here is investment, legal, or tax advice.
-          Consult a SEBI-registered investment adviser or other qualified
-          professional before transacting. Past performance does not guarantee
-          future results. Investments are subject to market risks.
-        </p>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Users className="h-4 w-4 text-primary" />
+                Stay in the loop
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                We share product updates from time to time. To request a feature
+                or share feedback, just email us at{" "}
+                <a
+                  className="text-primary hover:underline"
+                  href="mailto:support@magicstocks.ai"
+                >
+                  support@magicstocks.ai
+                </a>
+                .
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="text-center mt-12 p-6 surface-soft rounded-2xl">
+          <p className="text-xs text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <strong className="text-foreground">Disclaimer.</strong> MagicStocks.ai
+            provides information and education only. We are not SEBI-registered
+            as an investment adviser or research analyst. Nothing here is
+            investment, legal, or tax advice. Consult a SEBI-registered
+            investment adviser or other qualified professional before
+            transacting. Past performance does not guarantee future results.
+            Investments are subject to market risks.
+          </p>
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 

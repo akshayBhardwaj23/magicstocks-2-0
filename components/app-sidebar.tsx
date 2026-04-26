@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
@@ -10,15 +12,18 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { data } from "@/constants/sidebarData";
-import Link from "next/link";
+import logo from "../public/logo.png";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const Highlight = data.highlight.icon;
+
   return (
     <Sidebar variant="inset" className="border-r" {...props}>
       <SidebarHeader className="border-b">
@@ -27,19 +32,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton
               size="lg"
               asChild
-              className="hover:bg-sidebar-accent"
+              className="hover:bg-sidebar-accent group-data-[collapsible=icon]:!p-0"
             >
               <Link href="/">
-                <div className="flex items-center gap-3">
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm">
-                    <span className="text-sm font-bold">M</span>
+                <div className="flex items-center gap-3 group-data-[collapsible=icon]:gap-0">
+                  <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-sm overflow-hidden">
+                    <Image
+                      alt="Magic Stocks AI"
+                      src={logo}
+                      width={28}
+                      height={28}
+                      className="h-6 w-6 object-contain brightness-0 invert"
+                      priority
+                    />
                   </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold text-sidebar-foreground">
-                      Magic Stocks AI
+                  <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                    <span className="truncate font-display font-semibold text-sidebar-foreground">
+                      MagicStocks.ai
                     </span>
                     <span className="truncate text-xs text-sidebar-foreground/60">
-                      AI-Powered Stock Analysis
+                      Markets · learning · AI
                     </span>
                   </div>
                 </div>
@@ -48,14 +60,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className="gap-2">
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <SidebarGroup className="mt-auto group-data-[collapsible=icon]:hidden">
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs leading-relaxed text-sidebar-foreground/80">
+            <div className="flex items-center gap-2 text-primary">
+              <Highlight className="h-3.5 w-3.5" />
+              <span className="font-semibold">{data.highlight.title}</span>
+            </div>
+            <p className="mt-1 text-muted-foreground">
+              {data.highlight.description}
+            </p>
+          </div>
+        </SidebarGroup>
+        <NavSecondary items={data.navSecondary} />
       </SidebarContent>
+
       <SidebarFooter className="border-t">
-        <div className="px-2 py-2 text-xs text-sidebar-foreground/60 text-center">
-          Made with ❤️ in India © {new Date().getFullYear()}
+        <div className="px-2 py-1 text-[11px] text-sidebar-foreground/60 text-center group-data-[collapsible=icon]:hidden">
+          Made in India · © {new Date().getFullYear()}
         </div>
         <NavUser />
       </SidebarFooter>

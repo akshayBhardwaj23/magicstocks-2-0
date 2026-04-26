@@ -7,12 +7,68 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { CheckIcon } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { updateMessageCount } from "@/lib/userData";
+import { Badge } from "../ui/badge";
+
+type Plan = {
+  id: "Starter" | "Pro" | "Enterprise";
+  name: string;
+  price: string;
+  description: string;
+  features: string[];
+  cta: string;
+  highlight?: boolean;
+  contact?: boolean;
+};
+
+const PLANS: Plan[] = [
+  {
+    id: "Starter",
+    name: "Starter",
+    price: "₹99",
+    description: "For occasional research and learning.",
+    features: [
+      "20 credits",
+      "No expiry",
+      "All AI chat features",
+      "Portfolio screenshot import",
+    ],
+    cta: "Buy credits",
+  },
+  {
+    id: "Pro",
+    name: "Pro",
+    price: "₹799",
+    description: "For regular learners — best value.",
+    features: [
+      "300 credits",
+      "No expiry",
+      "All AI chat features",
+      "Portfolio screenshot import",
+      "Priority email support",
+    ],
+    cta: "Buy credits",
+    highlight: true,
+  },
+  {
+    id: "Enterprise",
+    name: "Enterprise",
+    price: "Talk to us",
+    description: "Custom packs for teams and partners.",
+    features: [
+      "Custom credit volume",
+      "Invoiced billing",
+      "Tailored onboarding",
+    ],
+    cta: "Contact us",
+    contact: true,
+  },
+];
 
 const Plans = () => {
   const { data: session } = useSession();
@@ -25,12 +81,10 @@ const Plans = () => {
       });
 
       if (res.status === 200) {
-        console.log("Order created successfully:", res.data);
         const { order, createdOrderId } = await res.data;
         if (order?.id) {
           const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-            // order.amount from server is already in paise
             amount: order.amount,
             currency: order.currency,
             name: "MagicStocks.ai",
@@ -62,11 +116,10 @@ const Plans = () => {
               email: session?.user?.email,
             },
             theme: {
-              color: "#3399cc",
+              color: "#10b981",
             },
           };
-          ////@ts-expect-error: it will open in new window
-          const paymentObject = new window.Razorpay(options);
+          const paymentObject = new (window as any).Razorpay(options);
           paymentObject.on("payment.failed", function (response: any) {
             alert(response.error.description);
           });
@@ -85,91 +138,67 @@ const Plans = () => {
       }
     }
   };
+
   return (
     <>
-      <Card className="bg-background p-6 rounded-lg shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Starter</CardTitle>
-          <div className="text-4xl font-bold">₹99</div>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>20 credits</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>Available for lifetime</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>Complete stock analysis features</span>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button
-            size="lg"
-            className="w-full"
-            onClick={() => handleCredits("Starter")}
-          >
-            Buy Credits
-          </Button>
-        </CardFooter>
-      </Card>
-      <Card className="bg-background p-6 rounded-lg shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Pro</CardTitle>
-          <div className="text-4xl font-bold">₹799</div>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>300 credits</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>Available for lifetime</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>Complete Stock Analysis</span>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button
-            size="lg"
-            className="w-full"
-            onClick={() => handleCredits("Pro")}
-          >
-            Buy Credits
-          </Button>
-        </CardFooter>
-      </Card>
-      <Card className="bg-background p-6 rounded-lg shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Enterprise</CardTitle>
-          <div className="text-4xl font-bold">Custom Pricing</div>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>Custom Credits</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>Available for lifetime</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckIcon className="w-5 h-5 text-primary" />
-            <span>Advanced Global Stock Analysis</span>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button size="lg" className="w-full">
-            <Link href="mailto:support@magicstocks.ai">Contact Us</Link>
-          </Button>
-        </CardFooter>
-      </Card>
+      {PLANS.map((plan) => (
+        <Card
+          key={plan.id}
+          className={`relative flex flex-col ${
+            plan.highlight
+              ? "border-primary/40 shadow-lg shadow-primary/10"
+              : ""
+          }`}
+        >
+          {plan.highlight && (
+            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-gradient text-primary-foreground border-0 shadow-md">
+              Most popular
+            </Badge>
+          )}
+          <CardHeader>
+            <CardTitle className="text-xl">{plan.name}</CardTitle>
+            <div className="font-display text-4xl font-semibold tabular-nums">
+              {plan.price}
+            </div>
+            <p className="text-sm text-muted-foreground">{plan.description}</p>
+          </CardHeader>
+          <CardContent className="grid gap-3 flex-1">
+            {plan.features.map((feature) => (
+              <div
+                key={feature}
+                className="flex items-center gap-2 text-sm"
+              >
+                <span className="h-5 w-5 rounded-full bg-primary/10 grid place-items-center shrink-0">
+                  <Check className="h-3 w-3 text-primary" />
+                </span>
+                <span>{feature}</span>
+              </div>
+            ))}
+          </CardContent>
+          <CardFooter>
+            {plan.contact ? (
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full"
+                asChild
+              >
+                <Link href="mailto:support@magicstocks.ai">{plan.cta}</Link>
+              </Button>
+            ) : (
+              <Button
+                size="lg"
+                className={`w-full ${
+                  plan.highlight ? "bg-brand-gradient hover:opacity-90" : ""
+                }`}
+                onClick={() => handleCredits(plan.id)}
+              >
+                {plan.cta}
+              </Button>
+            )}
+          </CardFooter>
+        </Card>
+      ))}
     </>
   );
 };

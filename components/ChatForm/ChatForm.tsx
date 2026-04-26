@@ -2,6 +2,7 @@ import React, { useState, useEffect, KeyboardEvent, useCallback } from "react";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { IoStopCircle } from "react-icons/io5";
+import { ArrowUp, Coins } from "lucide-react";
 import LoginDialogButton from "../LoginDialogButton/LoginDialogButton";
 import { useSession } from "next-auth/react";
 import { getMessagesCount } from "@/lib/userData";
@@ -30,7 +31,7 @@ const ChatForm = ({
   isLoading,
   stop,
 }: Props) => {
-  const { data: session } = useSession(); //Gets the session object to check the logged in user
+  const { data: session } = useSession();
   const [messageCount, setMessageCount] = useState<number | null>(null);
 
   const fetchMessageCount = useCallback(async () => {
@@ -48,73 +49,101 @@ const ChatForm = ({
     fetchMessageCount();
   }, [session, fetchMessageCount]);
 
-  let actionButton;
+  let actionButton: React.ReactNode;
 
   if (messageCount !== null && messageCount <= 0) {
-    // Display LoginDialogButton if messageCount is 0 or less
     actionButton = (
-      <Button type="button">
-        <Link href="/manage-credits">Send</Link>
+      <Button asChild>
+        <Link href="/manage-credits">Buy credits</Link>
       </Button>
     );
   } else if (isLoading) {
-    // Display Stop button if loading
     actionButton = (
-      <Button type="button" onClick={stop}>
-        <IoStopCircle />
+      <Button
+        type="button"
+        onClick={stop}
+        variant="outline"
+        size="icon"
+        className="h-10 w-10"
+        aria-label="Stop generating"
+      >
+        <IoStopCircle className="h-5 w-5" />
       </Button>
     );
   } else if (session?.user) {
-    // Display Send button if user is logged in
-    actionButton = <Button type="submit">Send</Button>;
+    actionButton = (
+      <Button
+        type="submit"
+        size="icon"
+        className="h-10 w-10 bg-brand-gradient hover:opacity-90 transition shadow-md"
+        aria-label="Send"
+        disabled={!input.trim()}
+      >
+        <ArrowUp className="h-5 w-5" />
+      </Button>
+    );
   } else {
-    // Display LoginDialogButton if no session
     actionButton = <LoginDialogButton />;
   }
 
   return (
     <div className="w-full max-w-4xl mx-auto p-3 md:p-4">
-      <form onSubmit={handleSubmit} className="space-y-2 md:space-y-4">
-        <div className="flex gap-2 md:gap-3 items-end">
+      <form onSubmit={handleSubmit} className="space-y-2 md:space-y-3">
+        <div className="relative flex items-end gap-2">
           <div className="flex-1 relative">
             <Textarea
-              placeholder="Ask about companies, sectors, or how markets work (information and education only)…"
-              className="min-h-[50px] md:min-h-[60px] max-h-[100px] md:max-h-[120px] resize-none pr-12 rounded-xl md:rounded-2xl border-2 focus:border-primary/50 transition-colors text-sm"
+              placeholder="Ask about a stock, sector, or how a metric is read… (information & education only)"
+              className="min-h-[52px] md:min-h-[60px] max-h-[180px] resize-none pr-14 rounded-2xl border-2 bg-background focus:border-primary/40 focus-visible:ring-primary/20 transition-colors text-sm shadow-sm"
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyPress}
               disabled={isLoading}
               rows={1}
             />
-            <div className="absolute bottom-2 md:bottom-3 right-2 md:right-3 text-xs text-muted-foreground">
-              {input.length > 0 && `${input.length}`}
-            </div>
+            {input.length > 0 && (
+              <div className="pointer-events-none absolute bottom-2 right-3 text-[10px] text-muted-foreground">
+                {input.length}
+              </div>
+            )}
           </div>
           <div className="flex-shrink-0">{actionButton}</div>
         </div>
 
-        {/* Hide footer on mobile when fixed */}
-        <div className="hidden md:flex md:items-center md:justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-4">
-            <span>Press Enter to send, Shift+Enter for new line</span>
+        <div className="hidden md:flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <span>
+              <kbd className="rounded border bg-muted px-1 py-0.5 font-mono text-[10px]">
+                Enter
+              </kbd>{" "}
+              to send,{" "}
+              <kbd className="rounded border bg-muted px-1 py-0.5 font-mono text-[10px]">
+                Shift+Enter
+              </kbd>{" "}
+              for new line
+            </span>
             {messageCount !== null && (
-              <span className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                {messageCount} credits remaining
+              <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-2 py-0.5">
+                <Coins className="h-3 w-3 text-primary" />
+                <span className="font-medium text-foreground">
+                  {messageCount}
+                </span>
+                <span>credit{messageCount === 1 ? "" : "s"}</span>
               </span>
             )}
           </div>
-          <span>
+          <span className="text-muted-foreground">
             MagicStocks.ai can make mistakes. Verify important information.
           </span>
         </div>
 
-        {/* Mobile footer - show credits only */}
-        <div className="md:hidden flex items-center justify-center gap-2 text-xs text-muted-foreground">
+        <div className="md:hidden flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
           {messageCount !== null && (
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              {messageCount} credits
+            <span className="inline-flex items-center gap-1 rounded-full border bg-background px-2 py-0.5">
+              <Coins className="h-3 w-3 text-primary" />
+              <span className="font-medium text-foreground">
+                {messageCount}
+              </span>{" "}
+              credits
             </span>
           )}
         </div>

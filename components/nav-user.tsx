@@ -2,12 +2,12 @@
 
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
   CreditCard,
   LogOut,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -27,12 +27,18 @@ import {
 } from "@/components/ui/sidebar";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "./ui/button";
-import Link from "next/link";
 
 export function NavUser() {
   const { data: session } = useSession();
-
   const { isMobile } = useSidebar();
+
+  const initials = (session?.user?.name || "U")
+    .split(" ")
+    .map((n) => n[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
   return (
     <SidebarMenu>
@@ -49,15 +55,15 @@ export function NavUser() {
                     src={session.user.image as string | undefined}
                     alt={session?.user?.name as string | undefined}
                   />
-                  <AvatarFallback className="rounded-lg">
-                    {session.user.image as string | undefined}
+                  <AvatarFallback className="rounded-lg bg-brand-gradient text-primary-foreground text-xs font-semibold">
+                    {initials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
                     {session?.user?.name as string | undefined}
                   </span>
-                  <span className="truncate text-xs">
+                  <span className="truncate text-xs text-muted-foreground">
                     {session?.user?.email as string | undefined}
                   </span>
                 </div>
@@ -77,15 +83,15 @@ export function NavUser() {
                       src={session.user.image as string | undefined}
                       alt={session.user.name as string | undefined}
                     />
-                    <AvatarFallback className="rounded-lg">
-                      {session.user.image as string | undefined}
+                    <AvatarFallback className="rounded-lg bg-brand-gradient text-primary-foreground text-xs font-semibold">
+                      {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
                       {session.user.name as string | undefined}
                     </span>
-                    <span className="truncate text-xs">
+                    <span className="truncate text-xs text-muted-foreground">
                       {session.user.email as string | undefined}
                     </span>
                   </div>
@@ -93,38 +99,45 @@ export function NavUser() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Sparkles />
-                  <Link href="/manage-credits">Manage Credits</Link>
+                <DropdownMenuItem asChild>
+                  <Link href="/manage-credits" className="cursor-pointer">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Manage credits
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <BadgeCheck />
-                  <Link href="/profile">Account</Link>
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    <BadgeCheck className="mr-2 h-4 w-4" />
+                    Account
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CreditCard />
-                  <Link href="/billing-history">Billing History</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell />
-                  <Link href="/notifications">Notifications</Link>
+                <DropdownMenuItem asChild>
+                  <Link href="/billing-history" className="cursor-pointer">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Billing history
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <LogOut />
-
-                <Button onClick={() => signOut({ redirectTo: "/" })}>
-                  Log Out
-                </Button>
+              <DropdownMenuItem
+                onSelect={() => signOut({ redirectTo: "/" })}
+                className="cursor-pointer text-destructive focus:text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button onClick={() => signIn()}>Sign In</Button>
+          <Button
+            onClick={() => signIn()}
+            className="w-full bg-brand-gradient hover:opacity-90 transition"
+          >
+            Sign in
+          </Button>
         )}
       </SidebarMenuItem>
     </SidebarMenu>

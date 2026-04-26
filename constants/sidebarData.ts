@@ -1,53 +1,42 @@
 import {
   BookOpen,
-  Bot,
   CircleHelp,
   CreditCard,
-  Frame,
   GlobeLock,
+  Info,
   LifeBuoy,
   Mailbox,
+  MessageSquareText,
+  PieChart,
   ReceiptText,
   Send,
-  Settings2,
-  SquareTerminal,
+  Sparkles,
+  UserRound,
 } from "lucide-react";
 
 export const data = {
   navMain: [
     {
-      title: "Bot",
+      title: "AI Chat",
       url: "/",
-      icon: Bot,
-    },
-    {
-      title: "Profile",
-      url: "/",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Personal",
-          url: "/profile",
-        },
-        {
-          title: "Chat History",
-          url: "/chat-history",
-        },
-        {
-          title: "Manage Credits",
-          url: "/manage-credits",
-        },
-        {
-          title: "Billing History",
-          url: "/billing-history",
-        },
-      ],
+      icon: MessageSquareText,
     },
     {
       title: "Portfolio",
       url: "/portfolio",
-      icon: SquareTerminal,
+      icon: PieChart,
+    },
+    {
+      title: "Account",
+      url: "/profile",
+      icon: UserRound,
+      isActive: true,
+      items: [
+        { title: "Personal", url: "/profile" },
+        { title: "Chat history", url: "/chat-history" },
+        { title: "Manage credits", url: "/manage-credits" },
+        { title: "Billing history", url: "/billing-history" },
+      ],
     },
     {
       title: "Help & FAQ",
@@ -55,14 +44,9 @@ export const data = {
       icon: CircleHelp,
     },
     {
-      title: "Testimonial",
+      title: "Testimonials",
       url: "/testimonial",
       icon: BookOpen,
-    },
-    {
-      title: "Theme",
-      url: "#",
-      icon: Settings2,
     },
   ],
   navSecondary: [
@@ -84,24 +68,30 @@ export const data = {
       icon: CreditCard,
     },
     {
-      name: "About Us",
+      name: "About us",
       url: "/about-us",
-      icon: Frame,
+      icon: Info,
     },
     {
-      name: "Contact Us",
+      name: "Contact us",
       url: "/contact-us",
       icon: Mailbox,
     },
     {
-      name: "Terms & Conditions",
+      name: "Terms & conditions",
       url: "/terms-conditions",
       icon: ReceiptText,
     },
     {
-      name: "Privacy Policy",
+      name: "Privacy policy",
       url: "/privacy-policy",
       icon: GlobeLock,
     },
   ],
+  highlight: {
+    title: "Education-only",
+    description:
+      "Information for learning—not SEBI-regulated investment advice.",
+    icon: Sparkles,
+  },
 };

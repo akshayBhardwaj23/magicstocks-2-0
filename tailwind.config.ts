@@ -8,7 +8,22 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+  	container: {
+  		center: true,
+  		padding: {
+  			DEFAULT: "1rem",
+  			md: "1.5rem",
+  			lg: "2rem",
+  		},
+  		screens: {
+  			"2xl": "1280px",
+  		},
+  	},
   	extend: {
+  		fontFamily: {
+  			sans: ["var(--font-sans)", "ui-sans-serif", "system-ui"],
+  			display: ["var(--font-display)", "var(--font-sans)", "ui-sans-serif"],
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -39,6 +54,14 @@ const config: Config = {
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			success: {
+  				DEFAULT: 'hsl(var(--success))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			warning: {
+  				DEFAULT: 'hsl(var(--warning))',
+  				foreground: 'hsl(var(--primary-foreground))'
   			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
