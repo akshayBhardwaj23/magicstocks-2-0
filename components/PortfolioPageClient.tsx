@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sheet";
 import { AiSummaryCard } from "./AiSummary/AiSummary";
 import { toast } from "@/hooks/use-toast";
+import Link from "next/link";
 import {
   AlertCircle,
   Camera,
@@ -222,6 +223,10 @@ export default function PortfolioPageClient() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [series, setSeries] = useState<SeriesPoint[]>([]);
   const [fxRates, setFxRates] = useState<Record<string, number>>({});
+  const [creditCosts, setCreditCosts] = useState<{
+    visionPerImage: number;
+    portfolioAi: number;
+  } | null>(null);
   const [aiUi, setAiUi] = useState<InsightsData | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -339,6 +344,19 @@ export default function PortfolioPageClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    fetch("/api/credits/config")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.costs)
+          setCreditCosts({
+            visionPerImage: d.costs.visionPerImage,
+            portfolioAi: d.costs.portfolioAi,
+          });
+      })
+      .catch(() => {});
+  }, []);
+
   const showDiffToast = (
     diff: any,
     diffSummary: string,
@@ -380,6 +398,38 @@ export default function PortfolioPageClient() {
         body: formData,
       });
       const json = await res.json().catch(() => ({}));
+      if (res.status === 402) {
+        toast({
+          variant: "destructive",
+          title: "Not enough credits",
+          description: (
+            <span>
+              {json?.message || "Add credits to import screenshots."}{" "}
+              <Link
+                href="/manage-credits"
+                className="font-medium text-primary underline"
+              >
+                Buy credits
+              </Link>
+            </span>
+          ),
+        });
+        return;
+      }
+      if (res.status === 422) {
+        const extra =
+          json?.creditsCharged != null
+            ? ` ${json.creditsCharged} credit${
+                json.creditsCharged === 1 ? "" : "s"
+              } were used for this attempt.`
+            : "";
+        toast({
+          variant: "destructive",
+          title: "Could not read holdings",
+          description: (json?.message || "Try a clearer screenshot.") + extra,
+        });
+        return;
+      }
       if (!res.ok) {
         toast({
           variant: "destructive",
@@ -389,6 +439,14 @@ export default function PortfolioPageClient() {
             "Try a clearer image with visible holdings rows.",
         });
         return;
+      }
+      if (json.creditsCharged != null && json.remainingCredits != null) {
+        toast({
+          title: "Credits used",
+          description: `This import used ${json.creditsCharged} credit${
+            json.creditsCharged === 1 ? "" : "s"
+          }. ${json.remainingCredits} remaining.`,
+        });
       }
       showDiffToast(
         json.diff,
@@ -632,7 +690,14 @@ export default function PortfolioPageClient() {
                 — we keep your existing rows and only refresh what&apos;s in this
                 upload. Switch to{" "}
                 <span className="font-medium text-foreground">Replace all</span>{" "}
-                when this screenshot is your full holdings list.
+                when this screenshot is your full holdings list.{" "}
+                {creditCosts != null && (
+                  <span className="block mt-1.5 text-foreground/90">
+                    {creditCosts.visionPerImage} credit
+                    {creditCosts.visionPerImage === 1 ? "" : "s"} per image
+                    parsed.
+                  </span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -1019,6 +1084,30 @@ export default function PortfolioPageClient() {
                 method: "POST",
               });
               const contentType = res.headers.get("content-type") || "";
+              if (res.status === 402) {
+                let j: { message?: string } = {};
+                if (contentType.includes("application/json")) {
+                  try {
+                    j = await res.json();
+                  } catch {}
+                }
+                toast({
+                  variant: "destructive",
+                  title: "Not enough credits",
+                  description: (
+                    <span>
+                      {j?.message || "This analysis needs more credits. "}
+                      <Link
+                        href="/manage-credits"
+                        className="font-medium text-primary underline"
+                      >
+                        Buy credits
+                      </Link>
+                    </span>
+                  ),
+                });
+                return;
+              }
               if (!res.ok) {
                 let serverMsg = "";
                 if (contentType.includes("application/json")) {
@@ -1034,9 +1123,18 @@ export default function PortfolioPageClient() {
                 throw new Error(serverMsg || `HTTP ${res.status}`);
               }
               if (contentType.includes("application/json")) {
-                const { text, ui } = await res.json();
+                const body = await res.json();
+                const { text, ui } = body;
                 if (ui) setAiUi(ui);
                 if (text) setAiText(text);
+                if (body.creditsCharged != null && body.remainingCredits != null) {
+                  toast({
+                    title: "Credits used",
+                    description: `Analysis used ${body.creditsCharged} credit${
+                      body.creditsCharged === 1 ? "" : "s"
+                    }. ${body.remainingCredits} remaining.`,
+                  });
+                }
               } else {
                 const raw = await res.text();
                 setAiText(raw || "");

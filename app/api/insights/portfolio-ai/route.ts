@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Types } from "mongoose";
 import { auth } from "@/auth";
 import connectMongo from "@/lib/connect-mongo";
 import User from "@/models/User";
@@ -7,6 +8,13 @@ import { perplexity } from "@/lib/customAiModel";
 import { generateText } from "ai";
 import { aiModelName } from "@/constants/constants";
 import { computePortfolioInsights } from "@/lib/insights/portfolio";
+import { CREDIT_COST_PORTFOLIO_AI } from "@/constants/credits";
+import {
+  hasMinimumCredits,
+  tryConsumeCredits,
+  refundCredits,
+} from "@/lib/credits/balance";
+import { logUsageEvent } from "@/lib/credits/logUsage";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -201,6 +209,9 @@ export async function POST() {
   if (!session)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+  let chargedPortfolioAi = 0;
+  let refundUserId: Types.ObjectId | null = null;
+
   try {
     await connectMongo();
     const user = await User.findOne({ email: session.user?.email });
@@ -217,6 +228,34 @@ export async function POST() {
         { status: 400 }
       );
     }
+
+    const cost = CREDIT_COST_PORTFOLIO_AI;
+    const pre = await hasMinimumCredits(user._id, cost);
+    if (!pre.ok) {
+      return NextResponse.json(
+        {
+          message: `Not enough credits. This analysis uses ${cost} credit${cost === 1 ? "" : "s"}.`,
+          remainingCredits: pre.balance,
+          requiredCredits: cost,
+          code: "INSUFFICIENT_CREDITS",
+        },
+        { status: 402 }
+      );
+    }
+    const cons = await tryConsumeCredits(user._id, cost);
+    if (!cons.ok) {
+      return NextResponse.json(
+        {
+          message: "Not enough credits.",
+          remainingCredits: cons.remaining,
+          requiredCredits: cost,
+          code: "INSUFFICIENT_CREDITS",
+        },
+        { status: 402 }
+      );
+    }
+    chargedPortfolioAi = cost;
+    refundUserId = user._id;
 
     // your existing numeric insights (kept as-is)
     const insights = computePortfolioInsights(allHoldings as any);
@@ -387,9 +426,18 @@ Output:
     }
 
     // ---------- Return BOTH text and UI payload ----------
-    return NextResponse.json({ text, ui });
+    logUsageEvent(user._id, "portfolio_ai", cost, { ok: true });
+    return NextResponse.json({
+      text,
+      ui,
+      creditsCharged: cost,
+      remainingCredits: cons.remaining,
+    });
   } catch (error) {
     console.error("[insights/portfolio-ai] failed to generate analysis", error);
+    if (chargedPortfolioAi > 0 && refundUserId) {
+      await refundCredits(refundUserId, chargedPortfolioAi);
+    }
     return NextResponse.json(
       { message: "Failed to generate analysis" },
       { status: 502 }

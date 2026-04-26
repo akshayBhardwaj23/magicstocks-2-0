@@ -10,6 +10,12 @@ import {
 import { Metadata } from "next";
 import Link from "next/link";
 import { Check, Sparkles } from "lucide-react";
+import {
+  getCreditPacks,
+  CREDIT_COST_CHAT,
+  CREDIT_COST_VISION_PER_IMAGE,
+  CREDIT_COST_PORTFOLIO_AI,
+} from "@/constants/credits";
 
 export const metadata: Metadata = {
   title: "Plans & billing | MagicStocks.ai",
@@ -27,57 +33,71 @@ type Plan = {
   highlight?: boolean;
 };
 
-const PLANS: Plan[] = [
-  {
-    name: "Free",
-    price: "₹0",
-    description: "Try MagicStocks at no cost.",
-    features: [
-      "2 starter credits",
-      "Full AI chat experience",
-      "Portfolio screenshot import",
-    ],
-    cta: "Get started",
-    href: "/",
-  },
-  {
-    name: "Starter",
-    price: "₹99",
-    description: "Casual research & learning.",
-    features: [
-      "20 credits",
-      "No expiry",
-      "All AI chat features",
-      "Portfolio screenshot import",
-    ],
-    cta: "Buy credits",
-    href: "/manage-credits",
-  },
-  {
-    name: "Pro",
-    price: "₹799",
-    description: "For regular learners — best value.",
-    features: [
-      "300 credits",
-      "No expiry",
-      "Priority email support",
-      "All AI chat features",
-    ],
-    cta: "Buy credits",
-    href: "/manage-credits",
-    highlight: true,
-  },
-  {
-    name: "Enterprise",
-    price: "Talk to us",
-    description: "Custom volume for teams & partners.",
-    features: ["Custom credit volume", "Invoiced billing", "Tailored onboarding"],
-    cta: "Contact us",
-    href: "mailto:support@magicstocks.ai",
-  },
-];
+function buildPlans(): Plan[] {
+  const packs = getCreditPacks();
+  const c = {
+    chat: CREDIT_COST_CHAT,
+    v: CREDIT_COST_VISION_PER_IMAGE,
+    p: CREDIT_COST_PORTFOLIO_AI,
+  };
+  return [
+    {
+      name: "Free",
+      price: "₹0",
+      description: "Try MagicStocks at no cost.",
+      features: [
+        "2 starter credits",
+        `Chat: ${c.chat} credit per completed reply`,
+        `Screenshot import: ${c.v} credit per image`,
+        `Portfolio AI analysis: ${c.p} credits per run`,
+        "Viewing your portfolio table (no AI) is free",
+      ],
+      cta: "Get started",
+      href: "/",
+    },
+    {
+      name: "Starter",
+      price: `₹${packs.starter.rupees}`,
+      description: "Casual research & learning.",
+      features: [
+        `${packs.starter.credits} credits`,
+        "No expiry",
+        `Chat: ${c.chat} credit per completed reply`,
+        `Screenshot import: ${c.v} credit per image`,
+        `Portfolio AI analysis: ${c.p} credits per run`,
+      ],
+      cta: "Buy credits",
+      href: "/manage-credits",
+    },
+    {
+      name: "Pro",
+      price: `₹${packs.pro.rupees}`,
+      description: "For regular learners — best value.",
+      features: [
+        `${packs.pro.credits} credits`,
+        "No expiry",
+        `Chat: ${c.chat} credit per completed reply`,
+        `Screenshot import: ${c.v} credit per image`,
+        `Portfolio AI analysis: ${c.p} credits per run`,
+        "Priority email support",
+      ],
+      cta: "Buy credits",
+      href: "/manage-credits",
+      highlight: true,
+    },
+    {
+      name: "Enterprise",
+      price: "Talk to us",
+      description: "Custom volume for teams & partners.",
+      features: ["Custom credit volume", "Invoiced billing", "Tailored onboarding"],
+      cta: "Contact us",
+      href: "mailto:support@magicstocks.ai",
+    },
+  ];
+}
 
 export default function PlansPage() {
+  const PLANS = buildPlans();
   return (
     <main className="relative">
       <div className="pointer-events-none absolute inset-0 -z-10 hero-spotlight" />
@@ -98,7 +118,8 @@ export default function PlansPage() {
             No subscriptions, no auto-renewals, no expiry. Top up credits
             whenever you need them.{" "}
             <span className="font-medium text-foreground">
-              1 credit = 1 AI message.
+              Credits cover chat replies, screenshot import, and portfolio AI —
+              see each plan for the exact weights.
             </span>
           </p>
         </div>

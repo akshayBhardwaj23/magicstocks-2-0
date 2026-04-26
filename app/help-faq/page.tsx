@@ -53,7 +53,7 @@ const HelpPage = () => {
     {
       question: "What are credits and how do they work?",
       answer:
-        "Credits are used for AI interactions. Each question or analysis request consumes one credit. You can purchase credit packs from the billing page. Credits don’t expire automatically.",
+        "Credits pay for server-side AI usage. A completed chat reply uses 1 credit. Importing portfolio screenshots uses 1 credit per image. Running the full educational portfolio AI analysis uses 2 credits. Viewing your saved portfolio list (no AI) is free. New accounts get 2 starter credits. You can buy more on Plans & billing or Manage credits; they do not expire automatically.",
     },
     {
       question: "Can I connect my Zerodha or Upstox account?",

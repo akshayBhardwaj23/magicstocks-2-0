@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Order from "@/models/Order";
 import connectMongo from "@/lib/connect-mongo";
 import User from "@/models/User";
+import { PACK_PRO_INR, PACK_STARTER_INR } from "@/constants/credits";
 
 const razorpay = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -25,10 +26,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Amounts in INR
+    // Amounts in INR (override with PACK_*_INR env)
     let amount = 0;
-    if (planType === "Starter") amount = 99; // ₹99
-    else if (planType === "Pro") amount = 799; // ₹799
+    if (planType === "Starter") amount = PACK_STARTER_INR;
+    else if (planType === "Pro") amount = PACK_PRO_INR;
 
     const options = {
       amount: amount * 100, // Razorpay expects amount in paise

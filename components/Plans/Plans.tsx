@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -26,52 +26,87 @@ type Plan = {
   contact?: boolean;
 };
 
-const PLANS: Plan[] = [
-  {
-    id: "Starter",
-    name: "Starter",
-    price: "₹99",
-    description: "For occasional research and learning.",
-    features: [
-      "20 credits",
-      "No expiry",
-      "All AI chat features",
-      "Portfolio screenshot import",
-    ],
-    cta: "Buy credits",
-  },
-  {
-    id: "Pro",
-    name: "Pro",
-    price: "₹799",
-    description: "For regular learners — best value.",
-    features: [
-      "300 credits",
-      "No expiry",
-      "All AI chat features",
-      "Portfolio screenshot import",
-      "Priority email support",
-    ],
-    cta: "Buy credits",
-    highlight: true,
-  },
-  {
-    id: "Enterprise",
-    name: "Enterprise",
-    price: "Talk to us",
-    description: "Custom packs for teams and partners.",
-    features: [
-      "Custom credit volume",
-      "Invoiced billing",
-      "Tailored onboarding",
-    ],
-    cta: "Contact us",
-    contact: true,
-  },
-];
+type PackConfig = {
+  packs: {
+    starter: { rupees: number; credits: number };
+    pro: { rupees: number; credits: number };
+  };
+  costs: {
+    chat: number;
+    visionPerImage: number;
+    portfolioAi: number;
+  };
+};
+
+function buildPlans(cfg: PackConfig | null): Plan[] {
+  const s = cfg?.packs.starter ?? { rupees: 99, credits: 20 };
+  const p = cfg?.packs.pro ?? { rupees: 799, credits: 300 };
+  const c = cfg?.costs ?? {
+    chat: 1,
+    visionPerImage: 1,
+    portfolioAi: 2,
+  };
+  return [
+    {
+      id: "Starter",
+      name: "Starter",
+      price: `₹${s.rupees}`,
+      description: "For occasional research and learning.",
+      features: [
+        `${s.credits} credits`,
+        "No expiry",
+        `Chat: ${c.chat} credit per completed reply`,
+        `Portfolio screenshot import: ${c.visionPerImage} credit per image`,
+        `Portfolio AI analysis: ${c.portfolioAi} credits per run`,
+      ],
+      cta: "Buy credits",
+    },
+    {
+      id: "Pro",
+      name: "Pro",
+      price: `₹${p.rupees}`,
+      description: "For regular learners — best value.",
+      features: [
+        `${p.credits} credits`,
+        "No expiry",
+        `Chat: ${c.chat} credit per completed reply`,
+        `Portfolio screenshot import: ${c.visionPerImage} credit per image`,
+        `Portfolio AI analysis: ${c.portfolioAi} credits per run`,
+        "Priority email support",
+      ],
+      cta: "Buy credits",
+      highlight: true,
+    },
+    {
+      id: "Enterprise",
+      name: "Enterprise",
+      price: "Talk to us",
+      description: "Custom packs for teams and partners.",
+      features: [
+        "Custom credit volume",
+        "Invoiced billing",
+        "Tailored onboarding",
+      ],
+      cta: "Contact us",
+      contact: true,
+    },
+  ];
+}
 
 const Plans = () => {
   const { data: session } = useSession();
+  const [cfg, setCfg] = useState<PackConfig | null>(null);
+
+  useEffect(() => {
+    fetch("/api/credits/config")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.packs && d?.costs) setCfg(d);
+      })
+      .catch(() => {});
+  }, []);
+
+  const PLANS = useMemo(() => buildPlans(cfg), [cfg]);
 
   const handleCredits = async (planType: string) => {
     try {

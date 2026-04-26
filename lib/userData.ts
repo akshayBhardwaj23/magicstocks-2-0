@@ -3,6 +3,7 @@
 import User from "@/models/User";
 import connectMongo from "./connect-mongo";
 import { revalidatePath } from "next/cache";
+import { PACK_PRO_CREDITS, PACK_STARTER_CREDITS } from "@/constants/credits";
 
 export const getMessagesCount = async (email: string | undefined | null) => {
   await connectMongo();
@@ -56,9 +57,9 @@ export const updateMessageCount = async (
 ) => {
   let count = 0;
   if (planType === "Starter") {
-    count = 20;
+    count = PACK_STARTER_CREDITS;
   } else if (planType === "Pro") {
-    count = 300;
+    count = PACK_PRO_CREDITS;
   }
 
   try {

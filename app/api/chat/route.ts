@@ -28,9 +28,20 @@ export async function POST(req: Request) {
       throw new Error("Login Again");
     }
 
-    if (user.current_messages === 0) {
-      throw new Error("Credits expired");
+    if (user.current_messages < 1) {
+      return NextResponse.json(
+        {
+          error: "Insufficient credits",
+          message:
+            "You have no credits left. Purchase a pack to continue chatting.",
+          remainingCredits: user.current_messages,
+          code: "INSUFFICIENT_CREDITS",
+        },
+        { status: 402 }
+      );
     }
+
+    const userIdStr = String(user._id);
 
     const result = await streamText({
       model: perplexity(aiModelName),
@@ -39,7 +50,7 @@ export async function POST(req: Request) {
       maxTokens: 1000,
       onFinish: async ({ text, finishReason, usage }) => {
         await storeChatsInDB(
-          user,
+          userIdStr,
           userMessage.content,
           text,
           finishReason,
@@ -53,6 +64,9 @@ export async function POST(req: Request) {
     return result.toDataStreamResponse();
   } catch (err: any) {
     console.error("There is some error: " + err.message);
-    return NextResponse.json({ error: err.message }, { status: 429 });
+    return NextResponse.json(
+      { error: err.message || "Request failed" },
+      { status: 429 }
+    );
   }
 }

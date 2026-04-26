@@ -39,7 +39,12 @@ const HomePage = () => {
     reload,
   } = useChat({
     onError: (error) => {
-      if (error.message.includes("Credits expired"))
+      const msg = error.message || "";
+      const noCredits =
+        msg.includes("Credits expired") ||
+        msg.includes("Insufficient credits") ||
+        msg.includes("402");
+      if (noCredits)
         toast({
           variant: "destructive",
           title: "Uh oh! No credits left.",
@@ -108,6 +113,12 @@ const HomePage = () => {
     </div>
   );
 
+  const isCreditError = !!error && (
+    error.message?.includes("Credits expired") ||
+    error.message?.includes("Insufficient credits") ||
+    error.message?.includes("402")
+  );
+
   const ErrorBlock = error && (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
       <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4">
@@ -115,12 +126,12 @@ const HomePage = () => {
           An error occurred
         </div>
         <div className="text-sm text-muted-foreground mb-4">
-          {error.message.includes("Credits expired")
+          {isCreditError
             ? "You have run out of credits. Please purchase more to continue."
             : "Something went wrong. Please try again."}
         </div>
         <div className="flex gap-2">
-          {error.message.includes("Credits expired") && (
+          {isCreditError && (
             <Button variant="outline" size="sm" asChild>
               <Link href="/manage-credits">Buy credits</Link>
             </Button>

@@ -1,6 +1,8 @@
 import Chat from "@/models/Chat";
 import User from "@/models/User";
 import connectMongo from "./connect-mongo";
+import { CREDIT_COST_CHAT } from "@/constants/credits";
+import { logUsageEvent } from "@/lib/credits/logUsage";
 
 export async function storeChatsInDB(
   userId: string,
@@ -22,6 +24,11 @@ export async function storeChatsInDB(
       totalTokens: totalTokens,
     });
     decrementUserChats(userId);
+    logUsageEvent(userId, "chat", CREDIT_COST_CHAT, {
+      promptTokens,
+      completionTokens,
+      totalTokens,
+    });
   } catch (err) {
     console.error("Error creating bot Chat:", err);
   }

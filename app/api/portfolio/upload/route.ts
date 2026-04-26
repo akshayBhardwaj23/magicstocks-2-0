@@ -10,6 +10,13 @@ import PortfolioSnapshot from "@/models/PortfolioSnapshot";
 import PortfolioSnapshotHistory from "@/models/PortfolioSnapshotHistory";
 import { NextRequest, NextResponse } from "next/server";
 import type { NormalizedHolding } from "@/lib/brokers";
+import { CREDIT_COST_VISION_PER_IMAGE } from "@/constants/credits";
+import {
+  hasMinimumCredits,
+  tryConsumeCredits,
+  refundCredits,
+} from "@/lib/credits/balance";
+import { logUsageEvent } from "@/lib/credits/logUsage";
 
 type UploadMode = "merge" | "replace";
 
@@ -96,15 +103,47 @@ export async function POST(request: NextRequest) {
     images.push({ base64: buf.toString("base64"), mimeType });
   }
 
+  const creditCost = images.length * CREDIT_COST_VISION_PER_IMAGE;
+  const pre = await hasMinimumCredits(user._id, creditCost);
+  if (!pre.ok) {
+    return NextResponse.json(
+      {
+        message: `Not enough credits. Screenshot import uses ${CREDIT_COST_VISION_PER_IMAGE} credit per image (${creditCost} for this upload).`,
+        remainingCredits: pre.balance,
+        requiredCredits: creditCost,
+        code: "INSUFFICIENT_CREDITS",
+      },
+      { status: 402 }
+    );
+  }
+
   try {
     const { holdings: parsedRaw, notes } = await parseHoldingsFromScreenshots(
       images
     );
     if (!parsedRaw.length) {
+      const cons = await tryConsumeCredits(user._id, creditCost);
+      if (!cons.ok) {
+        return NextResponse.json(
+          {
+            message: "Not enough credits.",
+            remainingCredits: cons.remaining,
+            requiredCredits: creditCost,
+            code: "INSUFFICIENT_CREDITS",
+          },
+          { status: 402 }
+        );
+      }
+      logUsageEvent(user._id, "vision_upload", creditCost, {
+        imageCount: images.length,
+        outcome: "empty_parse",
+      });
       return NextResponse.json(
         {
           message:
             "No holdings could be extracted. Try clearer screenshots with visible rows.",
+          creditsCharged: creditCost,
+          remainingCredits: cons.remaining,
         },
         { status: 422 }
       );
@@ -122,24 +161,50 @@ export async function POST(request: NextRequest) {
 
     const diff = diffHoldings(prevHoldings, finalHoldings);
 
-    const updated = await PortfolioSnapshot.findOneAndUpdate(
-      { userId: user._id },
-      { $set: { holdings: finalHoldings, source: "screenshot" } },
-      { upsert: true, new: true }
-    );
+    const cons = await tryConsumeCredits(user._id, creditCost);
+    if (!cons.ok) {
+      return NextResponse.json(
+        {
+          message: "Not enough credits to save this import.",
+          remainingCredits: cons.remaining,
+          requiredCredits: creditCost,
+          code: "INSUFFICIENT_CREDITS",
+        },
+        { status: 402 }
+      );
+    }
 
-    const { invested, current } = totals(finalHoldings);
-    await PortfolioSnapshotHistory.create({
-      userId: user._id,
-      takenAt: new Date(),
-      source: "screenshot",
-      holdings: finalHoldings,
-      totalInvested: invested,
-      totalCurrent: current,
+    let updated;
+    try {
+      updated = await PortfolioSnapshot.findOneAndUpdate(
+        { userId: user._id },
+        { $set: { holdings: finalHoldings, source: "screenshot" } },
+        { upsert: true, new: true }
+      );
+
+      const { invested, current } = totals(finalHoldings);
+      await PortfolioSnapshotHistory.create({
+        userId: user._id,
+        takenAt: new Date(),
+        source: "screenshot",
+        holdings: finalHoldings,
+        totalInvested: invested,
+        totalCurrent: current,
+        rowCount: finalHoldings.length,
+      });
+    } catch (persistErr) {
+      await refundCredits(user._id, creditCost);
+      throw persistErr;
+    }
+
+    const insights = computePortfolioInsights(finalHoldings);
+
+    logUsageEvent(user._id, "vision_upload", creditCost, {
+      imageCount: images.length,
+      outcome: "ok",
       rowCount: finalHoldings.length,
     });
 
-    const insights = computePortfolioInsights(finalHoldings);
     return NextResponse.json({
       ok: true,
       mode,
@@ -152,6 +217,8 @@ export async function POST(request: NextRequest) {
       diffSummary: summarizeDiff(diff),
       hasPrevious: prevHoldings.length > 0,
       lastUpdated: updated?.updatedAt || new Date(),
+      creditsCharged: creditCost,
+      remainingCredits: cons.remaining,
     });
   } catch (e: any) {
     console.error("[portfolio/upload]", e);
