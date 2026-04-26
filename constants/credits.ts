@@ -27,19 +27,63 @@ export const CREDIT_COST_PORTFOLIO_AI = ni("CREDIT_COST_PORTFOLIO_AI", 2);
 export const CREDIT_COST_SNAPSHOT_PATCH = 0;
 
 /** Pack: Starter — INR price (Razorpay). */
-export const PACK_STARTER_INR = ni("PACK_STARTER_INR", 99);
+export const PACK_STARTER_INR = ni("PACK_STARTER_INR", 199);
 
 /** Pack: Pro — INR price. */
 export const PACK_PRO_INR = ni("PACK_PRO_INR", 799);
 
-/** Credits granted on Starter purchase. */
-export const PACK_STARTER_CREDITS = ni("PACK_STARTER_CREDITS", 20);
+/**
+ * Credits granted on Starter purchase. At default ₹199/40, gross ₹/credit ≈ same as
+ * legacy ₹99/20 (~₹5), so entry economics stay familiar while list price is higher.
+ */
+export const PACK_STARTER_CREDITS = ni("PACK_STARTER_CREDITS", 40);
 
 /**
- * Credits granted on Pro purchase. Lower if you need higher ₹/credit after fees.
- * Default 300 matches historical product.
+ * Pro: lower gross ₹/credit than Starter. Default 250 @ ₹799 — tune via env.
  */
-export const PACK_PRO_CREDITS = ni("PACK_PRO_CREDITS", 300);
+export const PACK_PRO_CREDITS = ni("PACK_PRO_CREDITS", 250);
+
+/**
+ * “Was” / list price in INR (marketing only; Razorpay still charges `PACK_*_INR`).
+ * If list ≤ sale, UI hides the strikethrough. Override with env to turn off: set
+ * `PACK_STARTER_LIST_INR=0` and `PACK_PRO_LIST_INR=0` or equal to sale.
+ */
+export const PACK_STARTER_LIST_INR = ni("PACK_STARTER_LIST_INR", 299);
+export const PACK_PRO_LIST_INR = ni("PACK_PRO_LIST_INR", 999);
+
+export type SaleDisplay = {
+  saleInr: number;
+  listInr: number | null;
+  savingsInr: number | null;
+  percentOff: number | null;
+};
+
+function saleDisplay(sale: number, list: number): SaleDisplay {
+  if (!Number.isFinite(list) || list <= 0 || list <= sale) {
+    return {
+      saleInr: sale,
+      listInr: null,
+      savingsInr: null,
+      percentOff: null,
+    };
+  }
+  const savings = list - sale;
+  const percentOff = Math.max(0, Math.round((savings / list) * 100));
+  return { saleInr: sale, listInr: list, savingsInr: savings, percentOff };
+}
+
+export function getStarterSaleDisplay(): SaleDisplay {
+  return saleDisplay(PACK_STARTER_INR, PACK_STARTER_LIST_INR);
+}
+
+export function getProSaleDisplay(): SaleDisplay {
+  return saleDisplay(PACK_PRO_INR, PACK_PRO_LIST_INR);
+}
+
+/** Marketing line for both packs (e.g. banner badge). */
+export function getPackPromoLabel(): string {
+  return (process.env.PACK_PROMO_LABEL || "Launch offer").trim() || "Launch offer";
+}
 
 export type CreditPacks = {
   starter: { rupees: number; credits: number };

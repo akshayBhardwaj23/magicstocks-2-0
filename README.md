@@ -55,10 +55,13 @@ Pack size and INR price (used by Razorpay `order` + credit grant on verify):
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `PACK_STARTER_INR` | 99 | Starter pack price (INR) |
+| `PACK_STARTER_INR` | 199 | Starter pack price (INR) |
 | `PACK_PRO_INR` | 799 | Pro pack price (INR) |
-| `PACK_STARTER_CREDITS` | 20 | Credits added on Starter purchase |
-| `PACK_PRO_CREDITS` | 300 | Credits added on Pro purchase (lower to improve blended margin) |
+| `PACK_STARTER_CREDITS` | 40 | Credits added on Starter purchase |
+| `PACK_PRO_CREDITS` | 250 | Credits on Pro (override in env) |
+| `PACK_STARTER_LIST_INR` | 299 | “Was” / list price for Starter (marketing; Razorpay still uses `PACK_STARTER_INR`) |
+| `PACK_PRO_LIST_INR` | 999 | “Was” / list price for Pro (marketing only) |
+| `PACK_PROMO_LABEL` | Launch offer | Badge text for discounted Starter & Pro |
 
 Per-feature credit weights:
 
@@ -69,6 +72,9 @@ Per-feature credit weights:
 | `CREDIT_COST_PORTFOLIO_AI` | 2 | One “Run portfolio AI” run (multi-call Perplexity) |
 
 `GET /api/credits/config` exposes packs and costs for the UI. Usage is logged in MongoDB `UsageEvent` for calibration (feature, credits, meta). Aggregate in Compass or export for comparison with Perplexity/OpenAI bills.
+
+- **Low-credits banner:** optional `NEXT_PUBLIC_LOW_CREDIT_WARNING_THRESHOLD` (default `3`) — shows a yellow bar when balance is between 1 and the threshold. See `components/LowCreditsBanner.tsx`.
+- **Unit economics (worked numbers):** [docs/unit-economics.md](docs/unit-economics.md) — illustrative; replace USD/INR and service bills with yours.
 
 ## Broker Integrations (India)
 

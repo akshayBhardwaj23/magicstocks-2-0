@@ -14,6 +14,12 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { updateMessageCount } from "@/lib/userData";
 import { Badge } from "../ui/badge";
+import {
+  getPackPromoLabel,
+  getProSaleDisplay,
+  getStarterSaleDisplay,
+  type SaleDisplay,
+} from "@/constants/credits";
 
 type Plan = {
   id: "Starter" | "Pro" | "Enterprise";
@@ -24,6 +30,9 @@ type Plan = {
   cta: string;
   highlight?: boolean;
   contact?: boolean;
+  /** When set, show list price + “you save” (Starter / Pro). */
+  sale?: SaleDisplay;
+  promoLabel?: string;
 };
 
 type PackConfig = {
@@ -36,16 +45,25 @@ type PackConfig = {
     visionPerImage: number;
     portfolioAi: number;
   };
+  display?: {
+    promoLabel: string;
+    starter: SaleDisplay;
+    pro: SaleDisplay;
+  };
 };
 
 function buildPlans(cfg: PackConfig | null): Plan[] {
-  const s = cfg?.packs.starter ?? { rupees: 99, credits: 20 };
-  const p = cfg?.packs.pro ?? { rupees: 799, credits: 300 };
+  const s = cfg?.packs.starter ?? { rupees: 199, credits: 40 };
+  const p = cfg?.packs.pro ?? { rupees: 799, credits: 250 };
   const c = cfg?.costs ?? {
     chat: 1,
     visionPerImage: 1,
     portfolioAi: 2,
   };
+  const disp = cfg?.display;
+  const promo = disp?.promoLabel ?? getPackPromoLabel();
+  const stSale = disp?.starter ?? getStarterSaleDisplay();
+  const prSale = disp?.pro ?? getProSaleDisplay();
   return [
     {
       id: "Starter",
@@ -60,6 +78,8 @@ function buildPlans(cfg: PackConfig | null): Plan[] {
         `Portfolio AI analysis: ${c.portfolioAi} credits per run`,
       ],
       cta: "Buy credits",
+      sale: stSale,
+      promoLabel: promo,
     },
     {
       id: "Pro",
@@ -76,6 +96,8 @@ function buildPlans(cfg: PackConfig | null): Plan[] {
       ],
       cta: "Buy credits",
       highlight: true,
+      sale: prSale,
+      promoLabel: promo,
     },
     {
       id: "Enterprise",
@@ -190,11 +212,45 @@ const Plans = () => {
               Most popular
             </Badge>
           )}
-          <CardHeader>
-            <CardTitle className="text-xl">{plan.name}</CardTitle>
-            <div className="font-display text-4xl font-semibold tabular-nums">
-              {plan.price}
+          <CardHeader className="space-y-2">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <CardTitle className="text-xl">{plan.name}</CardTitle>
+              {plan.sale?.listInr != null &&
+                plan.sale.savingsInr != null &&
+                plan.promoLabel && (
+                  <Badge
+                    variant="secondary"
+                    className="shrink-0 border-amber-500/30 bg-amber-500/10 text-amber-950 dark:text-amber-100"
+                  >
+                    {plan.promoLabel}
+                  </Badge>
+                )}
             </div>
+            {plan.contact ? (
+              <div className="font-display text-4xl font-semibold tabular-nums">
+                {plan.price}
+              </div>
+            ) : plan.sale?.listInr != null &&
+              plan.sale.savingsInr != null &&
+              plan.sale.percentOff != null ? (
+              <div>
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                  <span className="text-xl text-muted-foreground line-through tabular-nums">
+                    ₹{plan.sale.listInr}
+                  </span>
+                  <span className="font-display text-4xl font-semibold tabular-nums text-foreground">
+                    ₹{plan.sale.saleInr}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-primary mt-1">
+                  You save ₹{plan.sale.savingsInr} ({plan.sale.percentOff}% off)
+                </p>
+              </div>
+            ) : (
+              <div className="font-display text-4xl font-semibold tabular-nums">
+                {plan.price}
+              </div>
+            )}
             <p className="text-sm text-muted-foreground">{plan.description}</p>
           </CardHeader>
           <CardContent className="grid gap-3 flex-1">

@@ -18,6 +18,7 @@ import Link from "next/link";
 import { Toaster } from "@/components/ui/toaster";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Badge } from "@/components/ui/badge";
+import { LowCreditsBanner } from "@/components/LowCreditsBanner";
 
 const sans = Inter({
   subsets: ["latin"],
@@ -85,6 +86,7 @@ export default function RootLayout({
                     <ThemeToggle />
                   </div>
                 </header>
+                <LowCreditsBanner />
                 <main className="flex-1">{children}</main>
                 <SiteDisclaimerFooter />
               </SidebarInset>

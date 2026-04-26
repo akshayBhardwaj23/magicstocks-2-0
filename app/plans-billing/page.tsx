@@ -12,9 +12,13 @@ import Link from "next/link";
 import { Check, Sparkles } from "lucide-react";
 import {
   getCreditPacks,
+  getPackPromoLabel,
+  getProSaleDisplay,
+  getStarterSaleDisplay,
   CREDIT_COST_CHAT,
   CREDIT_COST_VISION_PER_IMAGE,
   CREDIT_COST_PORTFOLIO_AI,
+  type SaleDisplay,
 } from "@/constants/credits";
 
 export const metadata: Metadata = {
@@ -31,10 +35,16 @@ type Plan = {
   cta: string;
   href: string;
   highlight?: boolean;
+  kind?: "free" | "paid" | "enterprise";
+  sale?: SaleDisplay;
+  promoLabel?: string;
 };
 
 function buildPlans(): Plan[] {
   const packs = getCreditPacks();
+  const promo = getPackPromoLabel();
+  const stSale = getStarterSaleDisplay();
+  const prSale = getProSaleDisplay();
   const c = {
     chat: CREDIT_COST_CHAT,
     v: CREDIT_COST_VISION_PER_IMAGE,
@@ -54,6 +64,7 @@ function buildPlans(): Plan[] {
       ],
       cta: "Get started",
       href: "/",
+      kind: "free",
     },
     {
       name: "Starter",
@@ -68,6 +79,9 @@ function buildPlans(): Plan[] {
       ],
       cta: "Buy credits",
       href: "/manage-credits",
+      kind: "paid",
+      sale: stSale,
+      promoLabel: promo,
     },
     {
       name: "Pro",
@@ -84,6 +98,9 @@ function buildPlans(): Plan[] {
       cta: "Buy credits",
       href: "/manage-credits",
       highlight: true,
+      kind: "paid",
+      sale: prSale,
+      promoLabel: promo,
     },
     {
       name: "Enterprise",
@@ -92,6 +109,7 @@ function buildPlans(): Plan[] {
       features: ["Custom credit volume", "Invoiced billing", "Tailored onboarding"],
       cta: "Contact us",
       href: "mailto:support@magicstocks.ai",
+      kind: "enterprise",
     },
   ];
 }
@@ -111,6 +129,9 @@ export default function PlansPage() {
             <Sparkles className="mr-1 h-3.5 w-3.5" />
             Simple, lifetime credits
           </Badge>
+          <p className="mt-3 text-sm font-medium text-primary">
+            {getPackPromoLabel()}: special pricing on Starter &amp; Pro — limited time.
+          </p>
           <h1 className="mt-4 font-display text-4xl sm:text-5xl font-semibold tracking-tight">
             Pay <span className="text-brand-gradient">only</span> for what you use
           </h1>
@@ -139,11 +160,46 @@ export default function PlansPage() {
                   Most popular
                 </Badge>
               )}
-              <CardHeader>
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <div className="font-display text-4xl font-semibold tabular-nums">
-                  {plan.price}
+              <CardHeader className="space-y-2">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  {plan.sale?.listInr != null &&
+                    plan.sale.savingsInr != null &&
+                    plan.promoLabel && (
+                      <Badge
+                        variant="secondary"
+                        className="shrink-0 border-amber-500/30 bg-amber-500/10 text-amber-950 dark:text-amber-100"
+                      >
+                        {plan.promoLabel}
+                      </Badge>
+                    )}
                 </div>
+                {plan.kind === "enterprise" || plan.kind === "free" ? (
+                  <div className="font-display text-4xl font-semibold tabular-nums">
+                    {plan.price}
+                  </div>
+                ) : plan.sale?.listInr != null &&
+                  plan.sale.savingsInr != null &&
+                  plan.sale.percentOff != null ? (
+                  <div>
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                      <span className="text-xl text-muted-foreground line-through tabular-nums">
+                        ₹{plan.sale.listInr}
+                      </span>
+                      <span className="font-display text-4xl font-semibold tabular-nums text-foreground">
+                        ₹{plan.sale.saleInr}
+                      </span>
+                    </div>
+                    <p className="text-sm font-medium text-primary mt-1">
+                      You save ₹{plan.sale.savingsInr} ({plan.sale.percentOff}%
+                      off)
+                    </p>
+                  </div>
+                ) : (
+                  <div className="font-display text-4xl font-semibold tabular-nums">
+                    {plan.price}
+                  </div>
+                )}
                 <p className="text-sm text-muted-foreground">
                   {plan.description}
                 </p>
