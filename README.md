@@ -49,6 +49,27 @@ OPENAI_API_KEY=sk-...
 
 **Notes:** Output is only as good as the screenshot and the model; users should verify every row. The app classifies lines into types such as `stock`, `etf`, `mutual_fund`, `foreign_stock`, `gold_bond`, `debt`, `other`. Set `PPLX_API` (or your env) for chat separately—this is unrelated to screenshot parsing.
 
+## Credit pricing (env tuning)
+
+Pack size and INR price (used by Razorpay `order` + credit grant on verify):
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `PACK_STARTER_INR` | 99 | Starter pack price (INR) |
+| `PACK_PRO_INR` | 799 | Pro pack price (INR) |
+| `PACK_STARTER_CREDITS` | 20 | Credits added on Starter purchase |
+| `PACK_PRO_CREDITS` | 300 | Credits added on Pro purchase (lower to improve blended margin) |
+
+Per-feature credit weights:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `CREDIT_COST_CHAT` | 1 | Deducted after each completed chat reply |
+| `CREDIT_COST_VISION_PER_IMAGE` | 1 | Per image in portfolio screenshot upload |
+| `CREDIT_COST_PORTFOLIO_AI` | 2 | One “Run portfolio AI” run (multi-call Perplexity) |
+
+`GET /api/credits/config` exposes packs and costs for the UI. Usage is logged in MongoDB `UsageEvent` for calibration (feature, credits, meta). Aggregate in Compass or export for comparison with Perplexity/OpenAI bills.
+
 ## Broker Integrations (India)
 
 **Note:** OAuth “link broker” buttons are currently **turned off** in the app UI, but server routes and env-based integration may still be used for development or when you re-enable the flow. If a user has both an uploaded snapshot and a broker connection, **the latest screenshot snapshot wins** (non-empty) for portfolio math.
